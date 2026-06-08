@@ -210,7 +210,7 @@ Release manifest schema:
 }
 ```
 
-`postInstallNote` is optional (only Gemini currently uses it).
+`postInstallNote` is optional (only Codex currently uses it).
 
 ## Version Filtering
 
