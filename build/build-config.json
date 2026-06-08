@@ -50,9 +50,9 @@
       "postInstallNote": null
     },
     {
-      "id": .agents",
+      "id": "antigravity",
       "name": "Antigravity",
-      "bundleName": .agents.zip",
+      "bundleName": "antigravity.zip",
       "format": "markdown",
       "configDir": ".agents",
       "directories": {
