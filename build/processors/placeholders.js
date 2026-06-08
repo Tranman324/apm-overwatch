@@ -80,8 +80,8 @@ export function replacePlaceholders(content, context) {
 
   // Replace ARGS placeholder based on format
   // Platforms with native argument variables: Claude ($ARGUMENTS), Copilot (${input:args}),
-  // Gemini ({{args}}), OpenCode ($ARGUMENTS). Cursor and Codex have no argument variable —
-  // use descriptive text so the model picks up the user's input naturally.
+  // OpenCode ($ARGUMENTS); the TOML output format uses {{args}}. Cursor and Codex have no
+  // argument variable, so descriptive text is used so the model picks up the user's input naturally.
   const argsPlaceholder = format === 'toml' ? '{{args}}'
     : id === 'copilot' ? '${input:args}'
     : (id === 'codex' || id === 'cursor') ? '(the text provided by the User after the command invocation, if any)'
