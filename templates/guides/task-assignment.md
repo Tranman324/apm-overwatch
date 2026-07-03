@@ -180,13 +180,25 @@ has_dependencies: true
   - *Cross-agent.* "This Task depends on work completed by [Producer Agent]:" intro - `**Integration Steps:**` numbered file reading instructions - `**Producer Output Summary:**` key features, files, interfaces, constraints - `**Upstream Context:**` for relevant ancestors.
 - *Objective:* Single-sentence Task goal, optionally enhanced with coordination-level context.
 - *Detailed Instructions:* Plan steps transformed into actionable instructions with integrated Spec content and guidance.
+<!-- OVERWATCH BEGIN -->
+- *Proof Discipline:* Worker-facing proof gate when useful: invariant to close, explicit non-scope or compatibility constraints, and required proof path. Instruct the Worker to use THINK / WORK / TRY: inspect current code and Task context, name the invariant and hazards, verify or reproduce the premise before fixing, map relevant readers or writers when applicable, make a narrow in-scope change, then prove Task-relative behavior through the real path when practical.
+<!-- OVERWATCH END -->
 - *Workspace:* Working directory and branch name for sequential dispatch, or worktree path and project root for parallel dispatch. For worktree dispatch, instruct the Worker to perform code work in the worktree but resolve all `.apm/` paths (Task Log, bus files) from the project root. Worker operates in the specified workspace, commits there, and notes it in the Task Log. Workers do not merge.
 - *Expected Output:* Deliverables from Plan Output field.
 - *Validation Criteria:* From Plan Validation field.
+<!-- OVERWATCH BEGIN -->
+  Include proof expectations: real command output when validation commands can run; code proof that exercises the real path and would fail under old broken behavior when practical; for template-only or documentation work, static diff evidence, generated-bundle inspection, artifact paths, or simulation with a short reason fail-under-broken proof is impractical.
+<!-- OVERWATCH END -->
 - *Instruction Accuracy:* The objective and expected output are authoritative - deliver those. However, the detailed instructions and steps were constructed from planning documents and may contain inaccurate details, missed prerequisites, or outdated assumptions about the codebase. When a specific instruction contradicts what the codebase actually shows, validate the actual state rather than persisting with the instruction as written.
 - *Task Iteration:* When validation fails, investigate before fixing - read error output, trace the cause, understand what went wrong. Apply one targeted change per iteration. When a fix does not resolve the issue, spawn a debug subagent with structured instructions: the error output, what you investigated and attempted, relevant file paths, and expected vs actual behavior. Direct it to trace the root cause and propose a fix. Validate the subagent's findings before applying. When the root cause could stem from multiple independent areas, spawn separate subagents in parallel. If unresolved after subagent investigation, report with Partial status.
+<!-- OVERWATCH BEGIN -->
+  If a premise is wrong, record `REFUTED` evidence rather than forcing a change. Use `DONE` for completed implementation plus proof, `HELD` when safety depends on human judgment, and `BLOCKED` when external input, credentials, live-state action, destructive operation, or a repeated unresolved blocker is required. These labels are evidence only; Task Log and Task Report status remains `Success`, `Partial`, or `Failed`.
+<!-- OVERWATCH END -->
 - *Task Logging:* Path and reference to `{GUIDE_PATH:task-logging}` §3.1 Task Log Procedure.
 - *Task Report:* Instruction to output a Task Report for User to return to Manager.
+<!-- OVERWATCH BEGIN -->
+  For branch-backed work, request branch, commit hash, files changed, validation commands/results, and residuals in the report; detailed command output belongs in the Task Log.
+<!-- OVERWATCH END -->
 
 ### 4.2 Follow-Up Format
 

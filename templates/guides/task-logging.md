@@ -41,6 +41,12 @@ Task Logs serve the Manager's coordination needs, not archival documentation. As
 
 **Default:** Prefer concise but comprehensive summaries with artifact references over verbose inline content. Reference artifacts by path rather than including large code blocks. Include code snippets only for novel, complex, or critical logic (20 lines or fewer). For error messages, include relevant stack traces or diagnostic details.
 
+<!-- OVERWATCH BEGIN -->
+### 2.4 Proof Evidence
+
+Task outcome statuses remain `Success`, `Partial`, and `Failed`. Put proof verdicts (`DONE`, `REFUTED`, `HELD`, `BLOCKED`) only inside Details, Validation, Issues, Compatibility Concerns, or Important Findings as evidence about a specific claim, check, or blocker. Validation entries include the exact command and real output when a command can run. If proof is artifact-based, cite the inspected diff, generated bundle, path, or simulation, and explain why stronger fail-under-broken proof is impractical.
+<!-- OVERWATCH END -->
+
 ---
 
 ## 3. Task Logging Procedure
@@ -122,7 +128,7 @@ compatibility_issues: true | false
 - Results or deliverables
 
 ## Validation
-[Description of validation performed and result]
+[Description of validation performed and result, including exact commands and real output when commands ran, plus proof verdict evidence when useful]
 
 ## Issues
 [Specific blockers or errors encountered, or "None"]
