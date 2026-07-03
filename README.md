@@ -1,3 +1,24 @@
+# APM Overwatch
+
+APM Overwatch is a public fork of [Agentic Project Management](https://github.com/sdi2200262/agentic-project-management). It adds execution-layer verification and autonomous-operation hardening to APM templates while preserving upstream documentation below.
+
+Install the custom templates from this fork with:
+
+```bash
+apm custom -r Tranman324/apm-overwatch
+```
+
+Public fork notes:
+
+- [Third Party Notices](THIRD_PARTY_NOTICES.md)
+- [Fork Maintenance](docs/FORK-MAINTENANCE.md)
+
+Overwatch v1 targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It does not claim to solve spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
+
+---
+
+## Upstream README
+
 # Agentic Project Management (APM)
 
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0) [![npm](https://img.shields.io/npm/v/agentic-pm)](https://www.npmjs.com/package/agentic-pm) [![GitHub Release](https://img.shields.io/github/v/release/sdi2200262/agentic-project-management)](https://github.com/sdi2200262/agentic-project-management/releases)
