@@ -71,7 +71,7 @@ After each review, reassess readiness and continue to dispatch in the same turn 
    - *Stage complete:* Stage summary per `{GUIDE_PATH:task-review}` §3.5 Stage Summary Creation, then continue to step 1 for next Stage. If all Stages complete, proceed to §4 Project Completion.
 
 <!-- OVERWATCH BEGIN -->
-During dispatch, include dispatch packet fields when needed to constrain Worker execution: role, work scope, invariant, non-scope, proof gate, output contract, and routing identity. During review, treat reports as hypotheses, validate claims against current artifacts, choose lightweight or two-critic review based on risk, and record review verdicts or rejection summaries without replacing APM lifecycle states.
+During dispatch, include dispatch packet fields when needed to constrain Worker execution: role, work scope, invariant, non-scope, environment prerequisites, proof gate, output contract, and routing identity. When direct subagent operation is available, create or resume Workers yourself, poll active Workers per the autonomous monitoring standards, and continue dispatch/review without requiring the User to relay bus messages. When direct operation is unavailable, use the command-mediated User routing above. During review, treat reports as hypotheses, validate claims against current artifacts, choose lightweight or two-critic review based on risk, and record review verdicts, monitoring state, or rejection summaries without replacing APM lifecycle states.
 <!-- OVERWATCH END -->
 
 ---
@@ -105,6 +105,7 @@ Handoff is User-initiated when context window limits approach.
 - **Handoff tracking:** Use Worker tracking and cross-agent overrides in the Tracker to track Worker Handoffs. See `{GUIDE_PATH:task-review}` §3.1 Report Processing for dependency reclassification details.
 <!-- OVERWATCH BEGIN -->
 - **Rejection tracking:** When review rejects work, keep the rejection summary available for follow-up dispatch. If the same Task is rejected twice, stop dispatching that Task and escalate with both summaries and a recommendation.
+- **Escalation boundary:** Escalate to the User only for live-state changes, money, legal/product risk, human-controlled credentials, or accepting launch risk. Handle code, tests, local tooling, stale serves, missing binaries, runtime flags, worktree state, Worker recovery/takeover, and report ambiguity without escalation.
 <!-- OVERWATCH END -->
 - **Context scope:** Read only the APM documents listed in §2 Initiation. Do not read other agents' guides, commands, or APM procedural documents beyond those listed and their internal cross-references.
 

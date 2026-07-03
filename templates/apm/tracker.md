@@ -24,7 +24,7 @@ title: <Project Name>
 <!-- OVERWATCH BEGIN -->
 ## Review State
 
-<!-- Record active review verdicts, residuals, rejection summaries, and rejection counts that affect dispatch, merge, Handoff, or escalation decisions. Remove or distill entries once they are no longer operationally needed. -->
+<!-- Record active review verdicts, residuals, rejection summaries, rejection counts, active Worker monitoring state, stall interventions, orphaned WIP adoption notes, and escalation counts that affect dispatch, merge, Handoff, or escalation decisions. Remove or distill entries once they are no longer operationally needed. -->
 
 <!-- OVERWATCH END -->
 

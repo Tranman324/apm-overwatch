@@ -36,11 +36,11 @@ Tasks may depend on outputs from previous Tasks. The context you include depends
 Task Prompts must be self-contained. Workers have the same tools as any agent but are intentionally scoped to their Task Prompt, Rules, and accumulated working context to keep them focused on execution. You enforce this scoping by extracting relevant content from the Spec, Plan, and authoritative sources into each prompt rather than referencing those documents by path. Never reference the Spec, Plan, Tracker, or Index by path - Workers should not read them. Task Prompt instructions and objectives do not reference Stage numbers, other Task IDs, or coordination-level concepts (dependency context sections reference producer Tasks by ID as needed). Validation criteria are Worker-scoped.
 
 <!-- OVERWATCH BEGIN -->
-**Dispatch packet fields:** Non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches include a compact dispatch packet. The packet states: Worker role, work scope, invariant to close, explicit non-scope, proof gate, output contract, and routing identity. For trivial contained work, the same fields may be satisfied by the Objective, Workspace, Expected Output, Validation Criteria, and Reporting Instructions when they are already explicit.
+**Dispatch packet fields:** Non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches include a compact dispatch packet. The packet states: Worker role, work scope, invariant to close, explicit non-scope, environment prerequisites, proof gate, output contract, and routing identity. For trivial contained work, the same fields may be satisfied by the Objective, Workspace, Expected Output, Validation Criteria, and Reporting Instructions when they are already explicit.
 
-**Packet precision:** The invariant describes what must become true, not how to implement it. The proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
+**Packet precision:** The invariant describes what must become true, not how to implement it. Environment prerequisites name required credentials, services, binaries, runtime flags, fixtures, approvals, or live-state constraints before edits begin. The proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
 
-**Inventory before vague scope:** For vague "all X" work, inventory the target set before dispatch and include it in work scope or split the Task. If scope, risk, dependencies, or proof cannot fit one Worker-owned proof gate, split the Task before dispatch.
+**Inventory before vague scope:** Vague "all X" Tasks require inventory before edits begin. Inventory the target set before dispatch and include it in work scope or split the Task.
 <!-- OVERWATCH END -->
 
 **Embed** content the Worker cannot discover from the codebase alone: design decisions and constraints from the Spec, Task definitions and guidance from the Plan, Task-relevant coordination context from the Tracker, observations from the Index, corrected findings from previous Tasks, and content from authoritative User documents the Spec references. Preserve specificity with exact constraints, not summaries. Present all embedded content as direct factual context. Never attribute content to its source artifact or use coordination-level vocabulary - Workers should not be aware of the Spec, Plan, Tracker, Index, or Memory - surfacing these concepts breaches their execution-focused scope.
@@ -73,6 +73,10 @@ Before constructing individual Task Prompts, assess dispatch opportunities acros
 - *Parallel:* two or more dispatch units (any mix) with no unresolved cross-agent dependencies among them, dispatched simultaneously. Requires version control workspace isolation.
 
 **Parallel dispatch prerequisites:** Version control must be initialized (established during Manager 1 initiation per `{COMMAND_PATH:apm-2-initiate-manager}` §2.1 First Manager Initiation). If version control is not active, fall back to sequential dispatch. Recommend the User configure platform tool approvals for Workers to minimize interactive wait times during parallel execution.
+
+<!-- OVERWATCH BEGIN -->
+**Task sizing controls:** Split work that crosses ownership boundaries, requires a contract change in another function/module, or has more than one independent acceptance gate. If scope, risk, dependencies, or proof cannot fit one Worker-owned proof gate, split the Task before dispatch.
+<!-- OVERWATCH END -->
 
 Before dispatching a ready unit, check whether a pending report would unlock Tasks that combine well with the current unit. If it is the only outstanding report, waiting costs little. If multiple reports are pending or no plausible combination exists, dispatch immediately.
 
@@ -189,7 +193,7 @@ has_dependencies: true
 - *Title.* `#` heading using Task ID and title. Each section uses `##` heading:
 - *Task Reference:* Task ID and assigned agent.
 <!-- OVERWATCH BEGIN -->
-- *Dispatch Packet:* Included for non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches. Fields: Worker Role, Work Scope, Invariant, Non-Scope, Proof Gate, Output Contract, Routing Identity.
+- *Dispatch Packet:* Included for non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches. Fields: Worker Role, Work Scope, Invariant, Non-Scope, Environment Prerequisites, Proof Gate, Output Contract, Routing Identity.
 <!-- OVERWATCH END -->
 - *Context from Dependencies.* Included when `has_dependencies: true`. Format depends on dependency type per §2.1 Dependency Context Standards.
   - *Same-agent.* "Building on your previous work:" intro - `**From Task <N>.<M>:**` with key outputs and recall points - `**Integration Approach:**` with brief guidance.

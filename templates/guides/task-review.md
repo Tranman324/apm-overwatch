@@ -78,6 +78,16 @@ When multiple Workers are active simultaneously, coordinate asynchronously.
 
 **Wait state:** When no Tasks are Ready but Workers are active, communicate what was processed, what is pending, and which report(s) the User should return next. If a pending report would unlock a better dispatch combination per `{GUIDE_PATH:task-assignment}` §2.4 Dispatch Standards, recommend the User prioritize that report.
 
+<!-- OVERWATCH BEGIN -->
+**Autonomous monitoring:** When direct subagent operation is available, poll active Workers every 5-10 minutes, or every 2-5 minutes for tiny or near-complete Tasks. Observable progress means Task Log update, file change, running test, Report Bus update, commit, or new concrete blocker. Track last progress signal, stale poll count, repeated blocker count, and any recovery action in Review State or Working Notes when it affects dispatch or Handoff.
+
+**Stall response:** After three stale polls or 20-30 minutes idle, intervene by inspecting logs, worktrees, branches, running processes, or reports; recovering or resuming the Worker; adopting the work directly; or splitting/re-dispatching if the original unit is too large. The same blocker across three attempts becomes `BLOCKED` and escalated. Long or high-risk Tasks have a soft 60-90 minute cap before recovery or splitting.
+
+**Escalation discrimination:** Escalate to the User only for live-state changes, money, legal/product risk, human-controlled credentials, or accepting launch risk. Handle code, tests, local tooling, stale serves, missing binaries, runtime flags, worktree state, Worker recovery/takeover, and report ambiguity without escalation. When more than two Tasks are escalated, halt dispatch and produce a consolidated status report.
+
+**Orphaned WIP adoption:** When a Worker stalls, disappears, or leaves work without a usable report, adopt the worktree or branch. Verify actual state against Task Log, Task Report, and Verification State where present; then continue, roll forward, or re-dispatch based on current evidence rather than narrative claims.
+<!-- OVERWATCH END -->
+
 ### 2.5 Merge Standards
 
 Merge state is a dispatch prerequisite. Merge completed feature branches into the base branch at specific coordination points.
@@ -247,7 +257,7 @@ completed_at: <datetime>  # set by Manager at project completion - absence means
 - *`## Worker Tracking`:* Records Worker states, instance numbers, and coordination notes. Update Worker tracking when Workers are first dispatched to, when Handoffs are detected, and when auto-compaction recovery is reported. Cross-agent overrides are recorded below the Worker table when Worker Handoffs reclassify dependencies, listing the specific Tasks affected and referencing the Handoff that triggered the reclassification.
 - *`## Version Control`:* Per-repository base branch, branch convention, and commit convention per `{GUIDE_PATH:task-assignment}` §4.4 Tracker VC Entry Format. Branch state is tracked per-Task in the Task table's Branch column.
 <!-- OVERWATCH BEGIN -->
-- *`## Review State`:* Current review verdicts, residuals, rejection summaries, and rejection counts that affect future dispatch, merge, Handoff, or escalation decisions. Keep entries concise and remove or distill them once no longer operationally needed.
+- *`## Review State`:* Current review verdicts, residuals, rejection summaries, rejection counts, active Worker monitoring state, stall interventions, orphaned WIP adoption notes, and escalation counts that affect future dispatch, merge, Handoff, or escalation decisions. Keep entries concise and remove or distill them once no longer operationally needed.
 <!-- OVERWATCH END -->
 - *`## Working Notes`:* Ephemeral coordination context per §2.7 Note-Taking Standards. Contents are inserted and removed as context evolves.
 
