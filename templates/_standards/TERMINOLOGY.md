@@ -70,6 +70,19 @@ Task Logs record the execution result:
 
 Partial means "I need guidance to continue." Failed means "I could not achieve the objective."
 
+<!-- OVERWATCH BEGIN -->
+### Evidence Vocabulary
+
+Proof verdicts and review verdicts are evidence vocabulary, not formal Task lifecycle states or Task outcome statuses. They appear inside validation details, review evidence, critic findings, Handoff verification state, or Tracker notes only.
+
+| Vocabulary | Values | Use |
+| ------ | ------ | ------ |
+| Proof verdicts | `DONE`, `REFUTED`, `HELD`, `BLOCKED` | Inner-loop proof labels for whether a specific claim, check, or blocker was resolved. |
+| Review verdicts | `MERGE_OK`, `MERGED_WITH_RESIDUALS`, `FIX_FIRST`, `REVERT_OR_ROLL_FORWARD` | Manager review labels for merge readiness, residual acceptance, required follow-up, or rollback/roll-forward pressure. |
+
+These values do not replace Waiting, Ready, Active, Done, Success, Partial, or Failed. A Task remains governed by the lifecycle and outcome vocabulary above.
+<!-- OVERWATCH END -->
+
 ---
 
 ## 5. Procedures
