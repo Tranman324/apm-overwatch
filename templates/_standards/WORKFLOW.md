@@ -10,7 +10,7 @@ Terms used here are defined in `TERMINOLOGY.md`. Writing conventions follow `WRI
 
 APM is a multi-agent project management framework that coordinates agents through file-based communication and structured planning documents.
 
-**User-mediated coordination** - The User initiates agents, triggers bus checks, approves key decisions, and triggers Handoffs. All inter-agent communication passes through the file system; agents never communicate directly. The User decides when messages are delivered by running trigger commands in the appropriate agent's chat.
+**User-mediated coordination** - In baseline command-mediated APM operation, the User initiates agents, triggers bus checks, approves key decisions, and triggers Handoffs. Inter-agent communication passes through the file system; agents do not rely on direct chat-to-chat communication. The User decides when messages are delivered by running trigger commands in the appropriate agent's chat.
 
 **Platform agnosticism** - Core concepts (the Message Bus, Memory, planning documents) are platform-independent. Platform-specific capabilities are additive and delivered through the build pipeline's conditional placeholder system.
 
@@ -123,11 +123,13 @@ The Message Bus is a file-based communication mechanism in `.apm/bus/`. The Plan
 
 A bus file is either empty (no message present) or contains a message awaiting delivery. Before writing to an outgoing bus file, an agent clears its incoming bus file. This prevents stale messages from accumulating and signals that the previous message was processed. Agents always read a bus file before writing to it to ensure cross-platform file tool compatibility.
 
-Workers read their Task Bus when the User runs `/apm-4-check-tasks` in the Worker's chat. The Manager reads Report Buses when the User runs `/apm-5-check-reports`. Both commands accept optional agent identifier arguments for targeted delivery.
+In baseline command-mediated operation, Workers read their Task Bus when the User runs `/apm-4-check-tasks` in the Worker's chat. The Manager reads Report Buses when the User runs `/apm-5-check-reports`. Both commands accept optional agent identifier arguments for targeted delivery.
 
 When dispatching multiple sequential Tasks to the same Worker, the Manager sends them as a batch in a single Task Bus message. Each Task Prompt within the batch retains its full standalone structure.
 
 ### 4.3 Communication Flow
+
+Baseline command-mediated flow:
 
 1. Manager writes a Task Prompt to a Worker's Task Bus and provides the User with specific action guidance - which command to run, in which agent's chat, and whether the Worker needs initialization first.
 2. User runs the indicated command(s) in the Worker's context.
@@ -135,7 +137,11 @@ When dispatching multiple sequential Tasks to the same Worker, the Manager sends
 4. User runs `/apm-5-check-reports` in the Manager's chat.
 5. Manager reviews the report and log, determines next steps.
 
-The User is the trigger puller at every boundary - there is no direct agent-to-agent communication. Each agent provides concise, actionable guidance covering only their end of the exchange.
+In this baseline flow, the User is the trigger puller at every boundary. Each agent provides concise, actionable guidance covering only their end of the exchange.
+
+<!-- OVERWATCH BEGIN -->
+In Overwatch autonomous operation, platform-native subagent tooling may perform Worker creation, bus delivery, polling, and report intake without requiring the User to manually run each trigger command. The Message Bus, Task Log, Task Report, Tracker, branch, worktree, and artifact records remain authoritative; automation only changes delivery mechanics. Human-only actions, live-state changes, external credentials, money, legal or product risk, and accepting launch risk remain User approval points.
+<!-- OVERWATCH END -->
 
 ### 4.4 Non-APM Agent Participation
 
