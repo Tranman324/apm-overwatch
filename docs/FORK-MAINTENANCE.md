@@ -73,6 +73,12 @@ The intended first public Overwatch tag is:
 v1.0.2-overwatch.1
 ```
 
+If using the release workflow, provide the version override without the leading `v`:
+
+```text
+1.0.2-overwatch.1
+```
+
 For later upstream bases, keep the upstream version visible in the tag. For example, the first Overwatch release based on upstream `v1.0.3` would be `v1.0.3-overwatch.1`.
 
 Jeremy owns tag push, GitHub release creation, and post-release scratch install validation:
