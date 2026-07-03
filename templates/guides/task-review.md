@@ -146,7 +146,7 @@ Perform the following actions:
 3. Check for Handoff indication - look for a statement that the Worker is a new instance and a list of current-Stage Task Logs read. When previous Stages exist, the report also notes that previous-Stage logs were not loaded. If detected, verify the Handoff Log exists. Update Worker tracking in the Tracker: increment the instance number for this Worker. Compare the loaded Task Logs against all Tasks previously completed by this Worker and record cross-agent overrides in the Tracker for any completed Tasks whose logs were not loaded. From this point forward, previous-Stage same-agent dependencies for this Worker are treated as cross-agent.
 4. Check for auto-compaction indication - a Worker that recovered from auto-compaction notes it in the Task Report. If detected, update Worker tracking Notes in the Tracker (e.g., "auto-compacted, recovered"). No dependency reclassification - the Worker continues as the same instance. Provide slightly more comprehensive dependency context in future Task Prompts for this Worker.
 5. Update dispatch tracking: mark this Worker as available, note completed Task(s) for readiness assessment.
-6. Merge completed branch per §2.5 Merge Standards if dependent Tasks need it.
+6. Defer any branch merge until review outcome confirms the Task has no outstanding follow-up; merge timing is handled in §3.3 Review Outcome per §2.5 Merge Standards.
 
 ### 3.2 Task Log Review
 
