@@ -16,7 +16,9 @@
 - Fable source identity: `sherlockholmesyes/fable-agent-orchestration`
 - Fable inspected commit recorded for this fork: `e7b6aefbea57a579ffb2b7d9a439118be4d62688`
 - License context: Apache-2.0 public-clean skill database; do not vendor Fable source text into APM runtime templates.
-- Relevant skill names to adapt as procedures, not copy as prose: `think-work-try`, `task-relative-test-gate`, `autonomous-finish-loop`, `investigate-before-fix`, `agent-dispatch-packet`, `agent-pr-validator`, `two-critic-review-loop`, `adversarial-reviewer`, `review-verifier`, `long-run-continuity`, and `orphaned-wip-adopter`.
+- Fable-derived procedures to adapt: `think-work-try`, `task-relative-test-gate`, `autonomous-finish-loop`, `investigate-before-fix`, `agent-dispatch-packet`, `agent-pr-validator`, `two-critic-review-loop`, and `orphaned-wip-adopter`.
+- `adversarial-reviewer` is not standalone integration; only its untrusted-narrative and negative-control principles fold into the Adversarial Change Critic.
+- Overwatch-original field rules: Handoff verification state and rejection handling. Do not treat these as Fable skill adaptations.
 
 ## Layer Map
 
