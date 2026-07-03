@@ -1,4 +1,4 @@
-# APM 1.0.2 - Task Review Guide
+# APM 1.0.1 - Task Review Guide
 
 ## 1. Overview
 
@@ -28,6 +28,14 @@ Extract the information needed for the next review decision.
 
 **Content review:** Beyond flags and status, review the log body sections (Summary, Details, Output, Validation, Issues) to understand what happened and inform the review outcome. When findings contradict content in the Spec, Plan, or Rules - factual inaccuracies, incorrect assumptions, outdated descriptions - treat the affected document as needing correction per §3.4 Planning Document Modification regardless of whether the Worker handled the discrepancy.
 
+<!-- OVERWATCH BEGIN -->
+**Claim validation:** Treat Worker reports, summaries, Task Logs, and subagent findings as hypotheses until checked against current artifacts. Extract concrete claims about changed files, commands, generated bundles, runtime behavior, commits, residuals, and recommendations. When useful, classify claims as facts, inferences, or recommendations so evidence and judgment do not blur.
+
+**Cross-abstraction validation:** Map claims to current files, diffs, command output, generated bundles, Task Logs, reports, commits, runtime artifacts, or Tracker state. Check freshness: evidence should reflect the current branch/worktree and the current artifact version, not an earlier failed run or stale report. For template and code review, prefer evidence one level closer to production than the edited source when practical, such as generated bundle inspection for template edits or runtime behavior for source changes.
+
+**Gate strength:** For non-trivial work, confirm that validation still exercises the Task trajectory and was not weakened to pass. If validation was reduced, skipped, or substituted, investigate before accepting the result.
+<!-- OVERWATCH END -->
+
 ### 2.2 Review Outcome Standards
 
 After reviewing a Task Log, determine the review outcome.
@@ -41,6 +49,14 @@ After reviewing a Task Log, determine the review outcome.
 - If the Worker needs to retry with refined instructions, create a follow-up Task Prompt per `.codex/apm-guides/task-assignment.md` §3.4 Follow-Up Task Prompt Construction. If the Worker also left changes uncommitted, note this in the follow-up instructions.
 - If planning documents need modification, proceed to §3.4 Planning Document Modification.
 - If investigation reveals deficiencies in previously-Done work, create a new Task through Plan modification per §2.3 Planning Document Modification Standards. The original Task remains Done; reference it from the new Task, include the discovery context, and specify what needs correction.
+
+<!-- OVERWATCH BEGIN -->
+**Review paths:** Use lightweight validation for trivial contained work. Use a two-critic gate for non-trivial work: the Test Gate Critic checks whether proof exercises the Task trajectory and was not weakened; the Adversarial Change Critic checks whether the change structurally closes the invariant, treats narratives as untrusted, and includes a negative-control or sabotage consideration when practical. Critics inspect actual diffs, artifacts, or command output.
+
+**Review verdicts:** Record one review evidence label when helpful: `MERGE_OK` for clean acceptance, `MERGED_WITH_RESIDUALS` when proceeding with explicit residuals, `FIX_FIRST` when follow-up is required before acceptance, or `REVERT_OR_ROLL_FORWARD` when current work must be reverted or corrected forward before coordination can continue. These labels do not replace Task lifecycle states or Task Log statuses.
+
+**Rejected work:** A `FIX_FIRST` or `REVERT_OR_ROLL_FORWARD` finding creates a rejection summary: verdict, what was rejected and why, evidence checked, critic or validator findings, and required correction. Attach that summary to the follow-up Task Prompt. If the same Task reaches a second rejection, halt dispatch for that Task and escalate to the User with both rejection summaries and your recommendation.
+<!-- OVERWATCH END -->
 
 Small contained actions (follow-ups for isolated issues, minor planning document corrections) can be executed immediately during the review cycle - present findings to the User for awareness after acting. When changes are significant enough to affect project direction or scope, pause for User approval per §2.3 Planning Document Modification Standards.
 
@@ -61,6 +77,16 @@ When multiple Workers are active simultaneously, coordinate asynchronously.
 **Merge coordination:** After successful review during parallel dispatch, merge the completed Task's branch per §2.5 Merge Standards before dispatching dependent Tasks. At Stage end, perform a merge sweep per §2.5 Merge Standards.
 
 **Wait state:** When no Tasks are Ready but Workers are active, communicate what was processed, what is pending, and which report(s) the User should return next. If a pending report would unlock a better dispatch combination per `.codex/apm-guides/task-assignment.md` §2.4 Dispatch Standards, recommend the User prioritize that report.
+
+<!-- OVERWATCH BEGIN -->
+**Autonomous monitoring:** When direct subagent operation is available, poll active Workers every 5-10 minutes, or every 2-5 minutes for tiny or near-complete Tasks. Observable progress means Task Log update, file change, running test, Report Bus update, commit, or new concrete blocker. Track last progress signal, stale poll count, repeated blocker count, and any recovery action in Review State or Working Notes when it affects dispatch or Handoff.
+
+**Stall response:** After three stale polls or 20-30 minutes idle, intervene by inspecting logs, worktrees, branches, running processes, or reports; recovering or resuming the Worker; adopting the work directly; or splitting/re-dispatching if the original unit is too large. The same blocker across three attempts becomes `BLOCKED` and escalated. Long or high-risk Tasks have a soft 60-90 minute cap before recovery or splitting.
+
+**Escalation discrimination:** Escalate to the User only for live-state changes, money, legal/product risk, human-controlled credentials, or accepting launch risk. Handle code, tests, local tooling, stale serves, missing binaries, runtime flags, worktree state, Worker recovery/takeover, and report ambiguity without escalation. When more than two Tasks are escalated, halt dispatch and produce a consolidated status report.
+
+**Orphaned WIP adoption:** When a Worker stalls, disappears, or leaves work without a usable report, adopt the worktree or branch. Verify actual state against Task Log, Task Report, and Verification State where present; then continue, roll forward, or re-dispatch based on current evidence rather than narrative claims.
+<!-- OVERWATCH END -->
 
 ### 2.5 Merge Standards
 
@@ -120,7 +146,7 @@ Perform the following actions:
 3. Check for Handoff indication - look for a statement that the Worker is a new instance and a list of current-Stage Task Logs read. When previous Stages exist, the report also notes that previous-Stage logs were not loaded. If detected, verify the Handoff Log exists. Update Worker tracking in the Tracker: increment the instance number for this Worker. Compare the loaded Task Logs against all Tasks previously completed by this Worker and record cross-agent overrides in the Tracker for any completed Tasks whose logs were not loaded. From this point forward, previous-Stage same-agent dependencies for this Worker are treated as cross-agent.
 4. Check for auto-compaction indication - a Worker that recovered from auto-compaction notes it in the Task Report. If detected, update Worker tracking Notes in the Tracker (e.g., "auto-compacted, recovered"). No dependency reclassification - the Worker continues as the same instance. Provide slightly more comprehensive dependency context in future Task Prompts for this Worker.
 5. Update dispatch tracking: mark this Worker as available, note completed Task(s) for readiness assessment.
-6. Merge completed branch per §2.5 Merge Standards if dependent Tasks need it.
+6. Defer any branch merge until review outcome confirms the Task has no outstanding follow-up; merge timing is handled in §3.3 Review Outcome per §2.5 Merge Standards.
 
 ### 3.2 Task Log Review
 
@@ -129,7 +155,8 @@ Execute after report processing. Present your assessment of the Task Log visibly
 Perform the following actions:
 1. Read the Task Log at the path referenced in the Task Report.
 2. Interpret content per §2.1 Task Log Review Standards: status, flags, body sections. Assess consistency between status/flags and body content.
-3. Continue to the review outcome.
+3. Extract review-relevant claims from the Task Report and Task Log, then map them to current artifacts per the claim validation and cross-abstraction standards in §2.1.
+4. Continue to the review outcome.
 
 ### 3.3 Review Outcome
 
@@ -141,8 +168,9 @@ Perform the following actions:
    - If no issues are found, continue to step 3.
    - If the Worker needs a follow-up, create a follow-up Task Prompt per `.codex/apm-guides/task-assignment.md` §3.4 Follow-Up Task Prompt Construction and continue to step 3.
    - If planning documents need modification, proceed to §3.4 Planning Document Modification (returns to step 3 after completion).
-3. Update the Tracker per §4.1 Task Tracking Format: mark completed Tasks as Done, reassess Waiting Tasks for readiness, update branches. Execute pending merges per §2.5 Merge Standards before reassessing readiness. Assess whether the review yielded note-worthy context and add to working notes - both ephemeral coordination items and durable observations for later distillation. Remove stale working notes. Batch all changes from this review-dispatch cycle into a single Tracker edit.
-4. Assess next action per §2.4 Parallel Coordination Standards:
+3. Record any review verdict, residuals, or rejection summary in Review State or Working Notes when it affects future dispatch, merge, or Handoff decisions.
+4. Update the Tracker per §4.1 Task Tracking Format: mark completed Tasks as Done only when review concludes without outstanding follow-up, reassess Waiting Tasks for readiness, update branches. Execute pending merges per §2.5 Merge Standards before reassessing readiness. Assess whether the review yielded note-worthy context and add to working notes - both ephemeral coordination items and durable observations for later distillation. Remove stale working notes. Batch all changes from this review-dispatch cycle into a single Tracker edit.
+5. Assess next action per §2.4 Parallel Coordination Standards:
    - If all Stage Tasks are Done and merged, collapse Stage per §4.1 Task Tracking Format and proceed to §3.5 Stage Summary Creation.
    - If Tasks are Ready, proceed to `.codex/apm-guides/task-assignment.md` §3.1 Dispatch Assessment in the same turn.
    - If no Tasks are Ready but Workers are active, communicate wait state per §2.4 Parallel Coordination Standards and direct User to return the next report.
@@ -228,6 +256,9 @@ completed_at: <datetime>  # set by Manager at project completion - absence means
 - *`## Task Tracking`:* Per-Stage Task state per §4.1 Task Tracking Format.
 - *`## Worker Tracking`:* Records Worker states, instance numbers, and coordination notes. Update Worker tracking when Workers are first dispatched to, when Handoffs are detected, and when auto-compaction recovery is reported. Cross-agent overrides are recorded below the Worker table when Worker Handoffs reclassify dependencies, listing the specific Tasks affected and referencing the Handoff that triggered the reclassification.
 - *`## Version Control`:* Per-repository base branch, branch convention, and commit convention per `.codex/apm-guides/task-assignment.md` §4.4 Tracker VC Entry Format. Branch state is tracked per-Task in the Task table's Branch column.
+<!-- OVERWATCH BEGIN -->
+- *`## Review State`:* Current review verdicts, residuals, rejection summaries, rejection counts, active Worker monitoring state, stall interventions, orphaned WIP adoption notes, and escalation counts that affect future dispatch, merge, Handoff, or escalation decisions. Keep entries concise and remove or distill them once no longer operationally needed.
+<!-- OVERWATCH END -->
 - *`## Working Notes`:* Ephemeral coordination context per §2.7 Note-Taking Standards. Contents are inserted and removed as context evolves.
 
 **Worker Tracking Table:**

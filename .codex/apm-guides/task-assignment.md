@@ -1,4 +1,4 @@
-# APM 1.0.2 - Task Assignment Guide
+# APM 1.0.1 - Task Assignment Guide
 
 ## 1. Overview
 
@@ -35,6 +35,14 @@ Tasks may depend on outputs from previous Tasks. The context you include depends
 
 Task Prompts must be self-contained. Workers have the same tools as any agent but are intentionally scoped to their Task Prompt, Rules, and accumulated working context to keep them focused on execution. You enforce this scoping by extracting relevant content from the Spec, Plan, and authoritative sources into each prompt rather than referencing those documents by path. Never reference the Spec, Plan, Tracker, or Index by path - Workers should not read them. Task Prompt instructions and objectives do not reference Stage numbers, other Task IDs, or coordination-level concepts (dependency context sections reference producer Tasks by ID as needed). Validation criteria are Worker-scoped.
 
+<!-- OVERWATCH BEGIN -->
+**Dispatch packet fields:** Non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches include a compact dispatch packet. The packet states: Worker role, work scope, invariant to close, explicit non-scope, environment prerequisites, proof gate, output contract, and routing identity. For trivial contained work, the same fields may be satisfied by the Objective, Workspace, Expected Output, Validation Criteria, and Reporting Instructions when they are already explicit.
+
+**Packet precision:** The invariant describes what must become true, not how to implement it. Environment prerequisites name required credentials, services, binaries, runtime flags, fixtures, approvals, or live-state constraints before edits begin. The proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
+
+**Inventory before vague scope:** Vague "all X" Tasks require inventory before edits begin. Inventory the target set before dispatch and include it in work scope or split the Task.
+<!-- OVERWATCH END -->
+
 **Embed** content the Worker cannot discover from the codebase alone: design decisions and constraints from the Spec, Task definitions and guidance from the Plan, Task-relevant coordination context from the Tracker, observations from the Index, corrected findings from previous Tasks, and content from authoritative User documents the Spec references. Preserve specificity with exact constraints, not summaries. Present all embedded content as direct factual context. Never attribute content to its source artifact or use coordination-level vocabulary - Workers should not be aware of the Spec, Plan, Tracker, Index, or Memory - surfacing these concepts breaches their execution-focused scope.
 
 **Reference with reading instructions** content that exists in the codebase: source files, existing patterns, configurations. Point the Worker to specific files and what to look for in them - the Worker reads them directly from their workspace. This applies to both dependency context and Spec content that references codebase patterns. The Manager identifies which files matter and what to look for, rather than embedding their contents.
@@ -46,6 +54,10 @@ Task Prompts must be self-contained. Workers have the same tools as any agent bu
 Follow-up Task Prompts occur when the review outcome determines retry after investigation. You arrive with: original Task Log findings, investigation results, understanding of what went wrong, and potentially modified planning documents.
 
 **Content principle:** The follow-up is a new prompt - Objective, Instructions, Output, and Validation are refined based on what went wrong. Do not copy the previous prompt. The Worker operated with scoped context; your follow-up bridges the gap between what the Worker saw and what you now know from investigation, other Task completions, and planning document updates. Give the Worker concrete direction rather than restating the original Task Prompt.
+
+<!-- OVERWATCH BEGIN -->
+**Rejection follow-up:** When review rejects work, attach the critic or validator findings. State what was rejected, why it failed the proof gate or invariant, which evidence was checked, and what the Worker must address from existing context. Do not tell the Worker to restart vaguely. If the same Task has already been rejected once, halt instead of dispatching a second follow-up and escalate to the User with both rejection summaries and a recommendation.
+<!-- OVERWATCH END -->
 
 **Log path continuity:** Use the same `log_path` as the original. The Worker overwrites the previous log. The Manager captures iteration patterns in Stage summaries when relevant.
 
@@ -61,6 +73,10 @@ Before constructing individual Task Prompts, assess dispatch opportunities acros
 - *Parallel:* two or more dispatch units (any mix) with no unresolved cross-agent dependencies among them, dispatched simultaneously. Requires version control workspace isolation.
 
 **Parallel dispatch prerequisites:** Version control must be initialized (established during Manager 1 initiation per `.agents/skills/apm-2-initiate-manager/SKILL.md` §2.1 First Manager Initiation). If version control is not active, fall back to sequential dispatch. Recommend the User configure platform tool approvals for Workers to minimize interactive wait times during parallel execution.
+
+<!-- OVERWATCH BEGIN -->
+**Task sizing controls:** Split work that crosses ownership boundaries, requires a contract change in another function/module, or has more than one independent acceptance gate. If scope, risk, dependencies, or proof cannot fit one Worker-owned proof gate, split the Task before dispatch.
+<!-- OVERWATCH END -->
 
 Before dispatching a ready unit, check whether a pending report would unlock Tasks that combine well with the current unit. If it is the only outstanding report, waiting costs little. If multiple reports are pending or no plausible combination exists, dispatch immediately.
 
@@ -122,7 +138,7 @@ Assemble the Task Prompt and deliver via the Message Bus.
 
 Perform the following actions:
 1. Construct YAML frontmatter per §4.1 Task Prompt Format.
-2. Construct prompt body: Task Reference, Context from Dependencies (if applicable), Objective, Detailed Instructions, Workspace, Expected Output, Validation Criteria, Instruction Accuracy, Task Iteration, Task Logging instructions, Reporting Instructions.
+2. Construct prompt body: Task Reference, Dispatch Packet when required by §2.2, Context from Dependencies (if applicable), Objective, Detailed Instructions, Workspace, Expected Output, Validation Criteria, Instruction Accuracy, Task Iteration, Task Logging instructions, Reporting Instructions.
 3. Create a feature branch off the repository's base branch per §2.5 Version Control Standards. For parallel dispatch, create a worktree: `git worktree add .apm/worktrees/<branch-slug> -b <branch-name>`. Include the branch name (sequential) or worktree path (parallel) in the Workspace section.
 4. Record the branch name in the Task row's Branch column when updating the Tracker.
 5. Clear the incoming Report Bus per §2.6 Delivery Standards.
@@ -139,12 +155,13 @@ Execute when the review outcome (per `.codex/apm-guides/task-review.md` §3.3 Re
 
 Perform the following actions:
 1. Capture follow-up context: what went wrong, investigation findings, required refinement, any planning document modifications.
-2. If planning documents were modified, extract relevant updated content per §3.2 Per-Task Analysis.
-3. Refine all content sections per §2.3 Follow-Up Standards. Include a follow-up context section explaining the issue and required refinement.
-4. Construct the follow-up prompt per §4.2 Follow-Up Format. Same `log_path` as the original.
-5. Clear the incoming Report Bus per §2.6 Delivery Standards.
-6. Read the Worker's Task Bus, then write to it: `.apm/bus/<agent-slug>/task.md`.
-7. Direct the User to the Worker per §3.3 Task Prompt Construction step 7.
+2. For rejected work, check Review State or working notes for prior rejection summaries for the same Task. If this would be the second rejection, do not dispatch; escalate with both rejection summaries and a recommendation.
+3. If planning documents were modified, extract relevant updated content per §3.2 Per-Task Analysis.
+4. Refine all content sections per §2.3 Follow-Up Standards. Include a follow-up context section explaining the issue and required refinement.
+5. Construct the follow-up prompt per §4.2 Follow-Up Format. Same `log_path` as the original.
+6. Clear the incoming Report Bus per §2.6 Delivery Standards.
+7. Read the Worker's Task Bus, then write to it: `.apm/bus/<agent-slug>/task.md`.
+8. Direct the User to the Worker per §3.3 Task Prompt Construction step 7.
 
 ---
 
@@ -175,24 +192,42 @@ has_dependencies: true
 **Prompt Body Sections:**
 - *Title.* `#` heading using Task ID and title. Each section uses `##` heading:
 - *Task Reference:* Task ID and assigned agent.
+<!-- OVERWATCH BEGIN -->
+- *Dispatch Packet:* Included for non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches. Fields: Worker Role, Work Scope, Invariant, Non-Scope, Environment Prerequisites, Proof Gate, Output Contract, Routing Identity.
+<!-- OVERWATCH END -->
 - *Context from Dependencies.* Included when `has_dependencies: true`. Format depends on dependency type per §2.1 Dependency Context Standards.
   - *Same-agent.* "Building on your previous work:" intro - `**From Task <N>.<M>:**` with key outputs and recall points - `**Integration Approach:**` with brief guidance.
   - *Cross-agent.* "This Task depends on work completed by [Producer Agent]:" intro - `**Integration Steps:**` numbered file reading instructions - `**Producer Output Summary:**` key features, files, interfaces, constraints - `**Upstream Context:**` for relevant ancestors.
 - *Objective:* Single-sentence Task goal, optionally enhanced with coordination-level context.
 - *Detailed Instructions:* Plan steps transformed into actionable instructions with integrated Spec content and guidance.
+<!-- OVERWATCH BEGIN -->
+- *Proof Discipline:* Worker-facing proof gate when useful: invariant to close, explicit non-scope or compatibility constraints, and required proof path. Instruct the Worker to use THINK / WORK / TRY: inspect current code and Task context, name the invariant and hazards, verify or reproduce the premise before fixing, map relevant readers or writers when applicable, make a narrow in-scope change, then prove Task-relative behavior through the real path when practical.
+<!-- OVERWATCH END -->
 - *Workspace:* Working directory and branch name for sequential dispatch, or worktree path and project root for parallel dispatch. For worktree dispatch, instruct the Worker to perform code work in the worktree but resolve all `.apm/` paths (Task Log, bus files) from the project root. Worker operates in the specified workspace, commits there, and notes it in the Task Log. Workers do not merge.
 - *Expected Output:* Deliverables from Plan Output field.
 - *Validation Criteria:* From Plan Validation field.
+<!-- OVERWATCH BEGIN -->
+  Include proof expectations: real command output when validation commands can run; code proof that exercises the real path and would fail under old broken behavior when practical; for template-only or documentation work, static diff evidence, generated-bundle inspection, artifact paths, or simulation with a short reason fail-under-broken proof is impractical.
+<!-- OVERWATCH END -->
 - *Instruction Accuracy:* The objective and expected output are authoritative - deliver those. However, the detailed instructions and steps were constructed from planning documents and may contain inaccurate details, missed prerequisites, or outdated assumptions about the codebase. When a specific instruction contradicts what the codebase actually shows, validate the actual state rather than persisting with the instruction as written.
 - *Task Iteration:* When validation fails, investigate before fixing - read error output, trace the cause, understand what went wrong. Apply one targeted change per iteration. When a fix does not resolve the issue, spawn a debug subagent with structured instructions: the error output, what you investigated and attempted, relevant file paths, and expected vs actual behavior. Direct it to trace the root cause and propose a fix. Validate the subagent's findings before applying. When the root cause could stem from multiple independent areas, spawn separate subagents in parallel. If unresolved after subagent investigation, report with Partial status.
+<!-- OVERWATCH BEGIN -->
+  If a premise is wrong, record `REFUTED` evidence rather than forcing a change. Use `DONE` for completed implementation plus proof, `HELD` when safety depends on human judgment, and `BLOCKED` when external input, credentials, live-state action, destructive operation, or a repeated unresolved blocker is required. These labels are evidence only; Task Log and Task Report status remains `Success`, `Partial`, or `Failed`.
+<!-- OVERWATCH END -->
 - *Task Logging:* Path and reference to `.codex/apm-guides/task-logging.md` §3.1 Task Log Procedure.
 - *Task Report:* Instruction to output a Task Report for User to return to Manager.
+<!-- OVERWATCH BEGIN -->
+  For branch-backed work, request branch, commit hash, files changed, validation commands/results, and residuals in the report; detailed command output belongs in the Task Log.
+<!-- OVERWATCH END -->
 
 ### 4.2 Follow-Up Format
 
 Follow-up Task Prompts use the same structure as §4.1 Task Prompt Format with these modifications:
 - *Title:* `APM Follow-Up Task: <Task Title>`
 - *Follow-up context section* after Task Reference - previous issue, investigation findings, required refinement, additional guidance.
+<!-- OVERWATCH BEGIN -->
+- *Rejection findings section* when the follow-up comes from rejected work - review verdict, what was rejected and why, critic or validator findings, evidence checked, and targeted instructions to address those findings from existing context.
+<!-- OVERWATCH END -->
 - *All content sections* refined based on what went wrong, not copied from the previous attempt.
 - *Same `log_path`* as the original Task Prompt.
 

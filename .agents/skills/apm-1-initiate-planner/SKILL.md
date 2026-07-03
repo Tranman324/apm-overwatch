@@ -4,7 +4,7 @@ description: Initiate an APM Planner.
 user-invocable: true
 ---
 
-# APM 1.0.2 - Planner Initiation Command
+# APM 1.0.1 - Planner Initiation Command
 
 ## 1. Overview
 

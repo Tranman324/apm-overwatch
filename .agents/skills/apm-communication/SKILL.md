@@ -3,7 +3,7 @@ name: apm-communication
 description: Agent communication standards and file-based Message Bus protocol for structured inter-agent messaging.
 ---
 
-# APM 1.0.2 - Communication Skill
+# APM 1.0.1 - Communication Skill
 
 ## 1. Overview
 

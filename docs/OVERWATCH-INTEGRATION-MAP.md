@@ -2,7 +2,7 @@
 
 ## Repository State
 
-- Workspace: `/Users/jeremytran/apm-overwatch`
+- Workspace: repository root
 - Branch: `docs/integration-map`
 - Current HEAD: `096fa79b9dade66cad0634ef572687bdee1be1c3`
 - HEAD refs observed: `v1.0.2`, `upstream/main`, `upstream/HEAD`, `origin/main`, `origin/HEAD`, `main`

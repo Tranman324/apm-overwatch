@@ -3,7 +3,7 @@ description = "Explores APM session archives to extract context for planning new
 
 developer_instructions = """
 
-# APM 1.0.2 - Archive Explorer Agent
+# APM 1.0.1 - Archive Explorer Agent
 
 ## 1. Overview
 

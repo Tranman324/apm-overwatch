@@ -4,7 +4,7 @@ description: Summarize and optionally archive an APM session.
 user-invocable: true
 ---
 
-# APM 1.0.2 - Summarize Session Command
+# APM 1.0.1 - Summarize Session Command
 
 This command summarizes the current APM session and optionally archives it. You are a standalone agent - not a Planner, Manager, or Worker. If you are one of those roles, concisely decline and take no action.
 

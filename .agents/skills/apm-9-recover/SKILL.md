@@ -4,7 +4,7 @@ description: Recover an APM agent's working context.
 user-invocable: true
 ---
 
-# APM 1.0.2 - Recover Command
+# APM 1.0.1 - Recover Command
 
 This command reconstructs working context after platform auto-compaction, manual compaction, or when an initiated agent must resume after a cleared or lost conversation. It applies to the Manager and Workers only. If you are a Planner or non-APM agent, concisely decline and take no action. Accepts an optional `[role]` argument: `manager` or a Worker agent identifier (e.g., `frontend-agent`).
 
@@ -17,7 +17,13 @@ The command argument - if provided - will be listed here: `(the text provided by
    - Worker: `.agents/skills/apm-3-initiate-worker/SKILL.md`
    Reading the initiation command alone is not sufficient - the documents it references contain the procedural knowledge and project state needed for recovery. Skip identity determination and greeting.
 3. Explore project state from the artifacts listed in your initiation command and the current state of the codebase to reconstruct where work stands. When gaps remain that artifacts cannot fill, ask the User for brief context before continuing.
+<!-- OVERWATCH BEGIN -->
+   If you are a Worker, do not read coordination-level documents such as the Spec, Plan, Tracker, or Index. Reconstruct Verification State only from Worker-scoped artifacts available to you: the Task Bus, Report Bus, Handoff Log or prompt if present, current Stage Task Logs for your Worker, and current workspace artifacts. Preserve claims checked, proof verdicts, proof commands or artifacts, and residuals still open before continuing.
+<!-- OVERWATCH END -->
 4. Note the recovery event: if you are the Manager, add a working note to the Tracker; if you are a Worker, include it in the next Task Report. Recovery does not increment the instance number - you continue as the same instance. When eventually performing Handoff, note which portions of working context are reconstructed rather than first-hand.
+<!-- OVERWATCH BEGIN -->
+   Worker recovery reports include whether Verification State was reconstructed and which residuals remain open.
+<!-- OVERWATCH END -->
 5. Continue with duties.
 
 ---

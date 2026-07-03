@@ -1,4 +1,4 @@
-# APM 1.0.2 - Task Execution Guide
+# APM 1.0.1 - Task Execution Guide
 
 ## 1. Overview
 
@@ -22,6 +22,10 @@ Follow cross-agent integration steps completely - read files, review artifacts, 
 
 Validation criteria in the Task Prompt specify what to check. Execute each criterion as written - run tests, verify outputs exist and match expected structure, confirm behavior meets requirements. Always complete autonomous checks first. If any autonomous check fails, correct it before involving the User - do not request User review or User action while autonomous checks are failing.
 
+<!-- OVERWATCH BEGIN -->
+**Task-relative proof:** When a validation command can be run, run it and paste the real command output in the Task Log; "tests pass" without command output is insufficient. For code behavior, prefer proof that exercises the real path and would fail under the broken or missing behavior when practical. For template-only or documentation work, use the strongest practical artifact proof - static diff evidence, generated-bundle inspection, artifact paths, or simulation - and state why fail-under-broken proof is impractical.
+<!-- OVERWATCH END -->
+
 When a criterion requires User involvement - judgment the Worker cannot self-assess (design approval, content quality) or action outside the development environment (running external checks, confirming platform behavior) - pause and present work only after all autonomous checks pass. When pausing, communicate clearly per `.agents/skills/apm-communication/SKILL.md` §2.1 Direct Communication: what is needed and why, what the User should expect or verify, and what to report back so execution can continue.
 
 When criteria require resources not currently available, request them from the User rather than substituting a lower verification level.
@@ -35,6 +39,12 @@ When validation fails, you enter a correction loop - investigate, correct, re-va
 **One targeted fix per iteration.** Apply a single change based on what your investigation found, then re-validate. When a correction does not resolve the issue - the same failure recurs, the fix introduces new problems, or the root cause remains unclear - spawn a debug subagent with structured instructions: the error output, what you investigated and attempted, relevant file paths, and the expected vs actual behavior. Direct it to trace the root cause, form a specific hypothesis, and propose a targeted fix. The subagent iterates in a fresh context while your main context is preserved for validating its findings. When the root cause could stem from multiple independent areas, spawn separate subagents in parallel. When a subagent returns, validate its findings before applying - confirm the root cause explanation makes sense and the fix addresses it. If unresolved after subagent investigation, prefer reporting back with Partial status - the Manager can restructure or reassign. When execution suggests Task Prompt instructions may be inaccurate, this is also a reason to stop iterating. When classification is unclear, prefer Partial with clear description - invites guidance rather than closing options.
 
 **User collaboration:** Pause when criteria require User judgment (you cannot self-approve subjective quality), when explicit User actions are needed (outside the development environment), when environment resources are needed for validation, or when iteration stalls and you need guidance. Continue autonomously when checks can be performed without User involvement and when the cause of failure is clear and the fix is within scope. When uncertain or stopping without Success, pause and present the situation to the User with options rather than making unilateral decisions.
+
+<!-- OVERWATCH BEGIN -->
+**THINK / WORK / TRY loop:** Before changing files, THINK: inspect the Task context and current code, name the invariant to close, identify hazards, verify or reproduce the premise before fixing, and map relevant readers or writers of touched state when applicable. WORK: make a narrow coherent change that preserves explicit non-scope and compatibility unless a breaking change is required. TRY: prove the Task trajectory through the real path when practical and record the commands or artifacts used.
+
+Proof verdict labels are evidence only, never Task outcome statuses: `DONE` means implementation and task-relative proof are complete; `REFUTED` means the diagnosis or premise was wrong and no change should ship for that premise; `HELD` means plausible work cannot be proven safe without human judgment; `BLOCKED` means external input, credentials, live-state action, destructive operation, or a repeated unresolved blocker is required.
+<!-- OVERWATCH END -->
 
 ### 2.4 Rules Updates
 
@@ -78,7 +88,7 @@ Perform the following actions:
 ### 3.3 Task Execution
 
 Perform the following actions:
-1. Execute Detailed Instructions sequentially, applying Guidance and relevant Rules from `AGENTS.md`, working toward the Objective.
+1. Execute Detailed Instructions sequentially, applying Guidance and relevant Rules from `AGENTS.md`, working toward the Objective. Use the THINK / WORK / TRY loop when planning and proving each meaningful change.
 2. When an instruction requires explicit User action, communicate what needs doing, why, and what options exist. Await completion, then resume.
 3. When an instruction includes a subagent step, spawn the relevant subagent with a structured task description. Verify critical findings by reading key files the subagent references before integrating into execution. For complex cross-agent dependencies or multi-file exploration, spawn a dedicated explorer subagent rather than inline searching - it runs in its own context window and returns consolidated findings: `spawn_agent(agent_type="explorer", message="...")`. Structure the prompt with specific files to read and questions to answer.
 4. When all instructions complete, communicate that implementation is complete and you are moving to validation. Continue to Task Validation.
@@ -86,7 +96,7 @@ Perform the following actions:
 ### 3.4 Task Validation
 
 Perform the following actions:
-1. Execute autonomous checks from the Task Prompt's validation criteria per §2.2 Validation Standards: run tests, verify builds, confirm outputs exist and match expected structure. If any fail, continue to the correction loop. Ambiguous results: treat as failure and iterate; if iteration doesn't resolve, pause for guidance.
+1. Execute autonomous checks from the Task Prompt's validation criteria per §2.2 Validation Standards: run tests, verify builds, confirm outputs exist and match expected structure, and preserve command output or artifact evidence for the Task Log. If any fail, continue to the correction loop. Ambiguous results: treat as failure and iterate; if iteration doesn't resolve, pause for guidance.
 2. If criteria require User involvement: pause and present work per §2.2 Validation Standards. Communicate what was accomplished, what needs the User's review or action, where deliverables are located, and what to report back. If approved or completed, proceed to §3.6 Task Completion with Success status. If feedback provided, continue to the correction loop with feedback integrated.
 3. If all criteria passed, proceed to §3.6 Task Completion with Success status.
 
@@ -107,6 +117,9 @@ Perform the following actions:
 4. Write Task Report per `.codex/apm-guides/task-logging.md` §3.2 Task Report Delivery. Include relevant status indications:
    - *After Handoff.* If this is the first Task after Handoff initialization, include incoming Worker indication: state instance number, list the specific Task Log files loaded, and note that previous-Stage logs were not loaded.
    - *After recovery:* If auto-compaction occurred and recovery was performed via `/apm-9-recover`, note it in the Task Report so the Manager is aware.
+   <!-- OVERWATCH BEGIN -->
+   - *Verification State continuity:* If Handoff or recovery loaded or reconstructed Verification State, mention claims checked, proof verdicts, proof commands or artifacts, and residuals carried forward. Keep detailed evidence in the Task Log.
+   <!-- OVERWATCH END -->
 5. State readiness for the next Task via `/apm-4-check-tasks` (no argument needed - you are already registered). Await the next Task Prompt or Handoff initiation.
 
 ---

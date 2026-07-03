@@ -1,4 +1,4 @@
-# APM 1.0.2 - Task Logging Guide
+# APM 1.0.1 - Task Logging Guide
 
 ## 1. Overview
 
@@ -41,6 +41,12 @@ Task Logs serve the Manager's coordination needs, not archival documentation. As
 
 **Default:** Prefer concise but comprehensive summaries with artifact references over verbose inline content. Reference artifacts by path rather than including large code blocks. Include code snippets only for novel, complex, or critical logic (20 lines or fewer). For error messages, include relevant stack traces or diagnostic details.
 
+<!-- OVERWATCH BEGIN -->
+### 2.4 Proof Evidence
+
+Task outcome statuses remain `Success`, `Partial`, and `Failed`. Put proof verdicts (`DONE`, `REFUTED`, `HELD`, `BLOCKED`) only inside Details, Validation, Issues, Compatibility Concerns, or Important Findings as evidence about a specific claim, check, or blocker. Validation entries include the exact command and real output when a command can run. If proof is artifact-based, cite the inspected diff, generated bundle, path, or simulation, and explain why stronger fail-under-broken proof is impractical.
+<!-- OVERWATCH END -->
+
 ---
 
 ## 3. Task Logging Procedure
@@ -57,7 +63,7 @@ Perform the following actions:
    - Set `status` per §2.2 Outcome Standards.
    - Set `important_findings` and `compatibility_issues` per §2.1 Flag Assessment Standards.
    - Set `stage`, `task`, `title`, and `agent` from the Task Prompt.
-3. Complete markdown body sections per §4.1 Task Log Format. Always include: Summary, Details, Output, Validation, Issues. Include conditional sections (Compatibility Concerns, Important Findings) only when their corresponding flag is `true`.
+3. Complete markdown body sections per §4.1 Task Log Format. Always include: Summary, Details, Output, Validation, Issues. Include Verification State when proof or continuity state exists. Include conditional sections (Compatibility Concerns, Important Findings) only when their corresponding flag is `true`.
 4. Write the Task Log to `log_path`.
 
 ### 3.2 Task Report Delivery
@@ -122,7 +128,15 @@ compatibility_issues: true | false
 - Results or deliverables
 
 ## Validation
-[Description of validation performed and result]
+[Description of validation performed and result, including exact commands and real output when commands ran, plus proof verdict evidence when useful]
+
+<!-- OVERWATCH BEGIN -->
+## Verification State
+- Claims checked:
+- Proof verdicts issued: [`DONE` | `REFUTED` | `HELD` | `BLOCKED` as evidence labels only]
+- Proof commands or artifacts:
+- Residuals open:
+<!-- OVERWATCH END -->
 
 ## Issues
 [Specific blockers or errors encountered, or "None"]
@@ -166,6 +180,10 @@ compatibility_issues: true | false
 - `compatibility_issues`: Same value as the Task Log.
 
 **Markdown Body:** 1-2 sentences summarizing the outcome. Reference the Task Log for detail.
+
+<!-- OVERWATCH BEGIN -->
+For the first report after Handoff or recovery, mention Verification State loaded or reconstructed and any residuals that remain open. Keep detailed claims, proof commands, and artifacts in the Task Log.
+<!-- OVERWATCH END -->
 
 For batch reports, use §4.3 Batch Report Format instead.
 

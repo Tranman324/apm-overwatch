@@ -4,7 +4,7 @@ description: Deliver a Task Prompt to an APM Worker.
 user-invocable: true
 ---
 
-# APM 1.0.2 - Worker Check Tasks Command
+# APM 1.0.1 - Worker Check Tasks Command
 
 Check your Task Bus for pending Task Prompts. If you are a Planner, Manager, or non-APM agent, concisely decline and take no action. This command replaces manual file referencing - you resolve your bus path from your registered identity or from the provided `[agent-id]` argument.
 

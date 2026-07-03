@@ -4,7 +4,7 @@ description: Perform a Handoff with an APM Manager.
 user-invocable: true
 ---
 
-# APM 1.0.2 - Manager Handoff Command
+# APM 1.0.1 - Manager Handoff Command
 
 ## 1. Overview
 
