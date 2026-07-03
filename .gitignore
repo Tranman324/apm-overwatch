@@ -122,6 +122,7 @@ api-docs/
 
 # Assistant Files
 .claude/
+.apm/
 AGENTS.md
 CLAUDE.md
 
