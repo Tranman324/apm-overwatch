@@ -21,5 +21,11 @@ title: <Project Name>
 | Repository | Base Branch | Branch Convention | Commit Convention |
 |-----------|-------------|-------------------|-------------------|
 
-## Working Notes
+<!-- OVERWATCH BEGIN -->
+## Review State
 
+<!-- Record active review verdicts, residuals, rejection summaries, and rejection counts that affect dispatch, merge, Handoff, or escalation decisions. Remove or distill entries once they are no longer operationally needed. -->
+
+<!-- OVERWATCH END -->
+
+## Working Notes

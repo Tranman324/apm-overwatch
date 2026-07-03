@@ -28,6 +28,14 @@ Extract the information needed for the next review decision.
 
 **Content review:** Beyond flags and status, review the log body sections (Summary, Details, Output, Validation, Issues) to understand what happened and inform the review outcome. When findings contradict content in the Spec, Plan, or Rules - factual inaccuracies, incorrect assumptions, outdated descriptions - treat the affected document as needing correction per §3.4 Planning Document Modification regardless of whether the Worker handled the discrepancy.
 
+<!-- OVERWATCH BEGIN -->
+**Claim validation:** Treat Worker reports, summaries, Task Logs, and subagent findings as hypotheses until checked against current artifacts. Extract concrete claims about changed files, commands, generated bundles, runtime behavior, commits, residuals, and recommendations. When useful, classify claims as facts, inferences, or recommendations so evidence and judgment do not blur.
+
+**Cross-abstraction validation:** Map claims to current files, diffs, command output, generated bundles, Task Logs, reports, commits, runtime artifacts, or Tracker state. Check freshness: evidence should reflect the current branch/worktree and the current artifact version, not an earlier failed run or stale report. For template and code review, prefer evidence one level closer to production than the edited source when practical, such as generated bundle inspection for template edits or runtime behavior for source changes.
+
+**Gate strength:** For non-trivial work, confirm that validation still exercises the Task trajectory and was not weakened to pass. If validation was reduced, skipped, or substituted, investigate before accepting the result.
+<!-- OVERWATCH END -->
+
 ### 2.2 Review Outcome Standards
 
 After reviewing a Task Log, determine the review outcome.
@@ -41,6 +49,14 @@ After reviewing a Task Log, determine the review outcome.
 - If the Worker needs to retry with refined instructions, create a follow-up Task Prompt per `{GUIDE_PATH:task-assignment}` §3.4 Follow-Up Task Prompt Construction. If the Worker also left changes uncommitted, note this in the follow-up instructions.
 - If planning documents need modification, proceed to §3.4 Planning Document Modification.
 - If investigation reveals deficiencies in previously-Done work, create a new Task through Plan modification per §2.3 Planning Document Modification Standards. The original Task remains Done; reference it from the new Task, include the discovery context, and specify what needs correction.
+
+<!-- OVERWATCH BEGIN -->
+**Review paths:** Use lightweight validation for trivial contained work. Use a two-critic gate for non-trivial work: the Test Gate Critic checks whether proof exercises the Task trajectory and was not weakened; the Adversarial Change Critic checks whether the change structurally closes the invariant, treats narratives as untrusted, and includes a negative-control or sabotage consideration when practical. Critics inspect actual diffs, artifacts, or command output.
+
+**Review verdicts:** Record one review evidence label when helpful: `MERGE_OK` for clean acceptance, `MERGED_WITH_RESIDUALS` when proceeding with explicit residuals, `FIX_FIRST` when follow-up is required before acceptance, or `REVERT_OR_ROLL_FORWARD` when current work must be reverted or corrected forward before coordination can continue. These labels do not replace Task lifecycle states or Task Log statuses.
+
+**Rejected work:** A `FIX_FIRST` or `REVERT_OR_ROLL_FORWARD` finding creates a rejection summary: verdict, what was rejected and why, evidence checked, critic or validator findings, and required correction. Attach that summary to the follow-up Task Prompt. If the same Task reaches a second rejection, halt dispatch for that Task and escalate to the User with both rejection summaries and your recommendation.
+<!-- OVERWATCH END -->
 
 Small contained actions (follow-ups for isolated issues, minor planning document corrections) can be executed immediately during the review cycle - present findings to the User for awareness after acting. When changes are significant enough to affect project direction or scope, pause for User approval per §2.3 Planning Document Modification Standards.
 
@@ -129,7 +145,8 @@ Execute after report processing. Present your assessment of the Task Log visibly
 Perform the following actions:
 1. Read the Task Log at the path referenced in the Task Report.
 2. Interpret content per §2.1 Task Log Review Standards: status, flags, body sections. Assess consistency between status/flags and body content.
-3. Continue to the review outcome.
+3. Extract review-relevant claims from the Task Report and Task Log, then map them to current artifacts per the claim validation and cross-abstraction standards in §2.1.
+4. Continue to the review outcome.
 
 ### 3.3 Review Outcome
 
@@ -141,8 +158,9 @@ Perform the following actions:
    - If no issues are found, continue to step 3.
    - If the Worker needs a follow-up, create a follow-up Task Prompt per `{GUIDE_PATH:task-assignment}` §3.4 Follow-Up Task Prompt Construction and continue to step 3.
    - If planning documents need modification, proceed to §3.4 Planning Document Modification (returns to step 3 after completion).
-3. Update the Tracker per §4.1 Task Tracking Format: mark completed Tasks as Done, reassess Waiting Tasks for readiness, update branches. Execute pending merges per §2.5 Merge Standards before reassessing readiness. Assess whether the review yielded note-worthy context and add to working notes - both ephemeral coordination items and durable observations for later distillation. Remove stale working notes. Batch all changes from this review-dispatch cycle into a single Tracker edit.
-4. Assess next action per §2.4 Parallel Coordination Standards:
+3. Record any review verdict, residuals, or rejection summary in Review State or Working Notes when it affects future dispatch, merge, or Handoff decisions.
+4. Update the Tracker per §4.1 Task Tracking Format: mark completed Tasks as Done only when review concludes without outstanding follow-up, reassess Waiting Tasks for readiness, update branches. Execute pending merges per §2.5 Merge Standards before reassessing readiness. Assess whether the review yielded note-worthy context and add to working notes - both ephemeral coordination items and durable observations for later distillation. Remove stale working notes. Batch all changes from this review-dispatch cycle into a single Tracker edit.
+5. Assess next action per §2.4 Parallel Coordination Standards:
    - If all Stage Tasks are Done and merged, collapse Stage per §4.1 Task Tracking Format and proceed to §3.5 Stage Summary Creation.
    - If Tasks are Ready, proceed to `{GUIDE_PATH:task-assignment}` §3.1 Dispatch Assessment in the same turn.
    - If no Tasks are Ready but Workers are active, communicate wait state per §2.4 Parallel Coordination Standards and direct User to return the next report.
@@ -228,6 +246,9 @@ completed_at: <datetime>  # set by Manager at project completion - absence means
 - *`## Task Tracking`:* Per-Stage Task state per §4.1 Task Tracking Format.
 - *`## Worker Tracking`:* Records Worker states, instance numbers, and coordination notes. Update Worker tracking when Workers are first dispatched to, when Handoffs are detected, and when auto-compaction recovery is reported. Cross-agent overrides are recorded below the Worker table when Worker Handoffs reclassify dependencies, listing the specific Tasks affected and referencing the Handoff that triggered the reclassification.
 - *`## Version Control`:* Per-repository base branch, branch convention, and commit convention per `{GUIDE_PATH:task-assignment}` §4.4 Tracker VC Entry Format. Branch state is tracked per-Task in the Task table's Branch column.
+<!-- OVERWATCH BEGIN -->
+- *`## Review State`:* Current review verdicts, residuals, rejection summaries, and rejection counts that affect future dispatch, merge, Handoff, or escalation decisions. Keep entries concise and remove or distill them once no longer operationally needed.
+<!-- OVERWATCH END -->
 - *`## Working Notes`:* Ephemeral coordination context per §2.7 Note-Taking Standards. Contents are inserted and removed as context evolves.
 
 **Worker Tracking Table:**
