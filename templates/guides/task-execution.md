@@ -117,6 +117,9 @@ Perform the following actions:
 4. Write Task Report per `{GUIDE_PATH:task-logging}` §3.2 Task Report Delivery. Include relevant status indications:
    - *After Handoff.* If this is the first Task after Handoff initialization, include incoming Worker indication: state instance number, list the specific Task Log files loaded, and note that previous-Stage logs were not loaded.
    - *After recovery:* If auto-compaction occurred and recovery was performed via `/apm-9-recover`, note it in the Task Report so the Manager is aware.
+   <!-- OVERWATCH BEGIN -->
+   - *Verification State continuity:* If Handoff or recovery loaded or reconstructed Verification State, mention claims checked, proof verdicts, proof commands or artifacts, and residuals carried forward. Keep detailed evidence in the Task Log.
+   <!-- OVERWATCH END -->
 5. State readiness for the next Task via `/apm-4-check-tasks` (no argument needed - you are already registered). Await the next Task Prompt or Handoff initiation.
 
 ---
