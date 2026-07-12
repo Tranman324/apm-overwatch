@@ -38,7 +38,7 @@ Task Prompts must be self-contained. Workers have the same tools as any agent bu
 <!-- OVERWATCH BEGIN -->
 **Dispatch packet fields:** Non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches include a compact dispatch packet. The packet states: Worker role, work scope, invariant to close, explicit non-scope, environment prerequisites, proof gate, output contract, and routing identity. For trivial contained work, the same fields may be satisfied by the Objective, Workspace, Expected Output, Validation Criteria, and Reporting Instructions when they are already explicit.
 
-**Packet precision:** The invariant describes what must become true, not how to implement it. Environment prerequisites name required credentials, services, binaries, runtime flags, fixtures, approvals, or live-state constraints before edits begin. The proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
+**Packet precision:** The invariant describes what must become true, not how to implement it. Environment prerequisites name required credentials, services, binaries, runtime flags, fixtures, approvals, or live-state constraints before edits begin. For non-trivial work, the proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant and the specific negative control or sabotage that must fail if the behavior is removed; if that control is impractical, state why and require the strongest substitute. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
 
 **Inventory before vague scope:** Vague "all X" Tasks require inventory before edits begin. Inventory the target set before dispatch and include it in work scope or split the Task.
 <!-- OVERWATCH END -->
@@ -56,7 +56,7 @@ Follow-up Task Prompts occur when the review outcome determines retry after inve
 **Content principle:** The follow-up is a new prompt - Objective, Instructions, Output, and Validation are refined based on what went wrong. Do not copy the previous prompt. The Worker operated with scoped context; your follow-up bridges the gap between what the Worker saw and what you now know from investigation, other Task completions, and planning document updates. Give the Worker concrete direction rather than restating the original Task Prompt.
 
 <!-- OVERWATCH BEGIN -->
-**Rejection follow-up:** When review rejects work, attach the critic or validator findings. State what was rejected, why it failed the proof gate or invariant, which evidence was checked, and what the Worker must address from existing context. Do not tell the Worker to restart vaguely. If the same Task has already been rejected once, halt instead of dispatching a second follow-up and escalate to the User with both rejection summaries and a recommendation.
+**Root-cause follow-up:** A prompt that directs a fix for confirmed-defect rejected or Failed work carries a `Root Cause:` distinct from the symptom. For rejected work, attach the critic or validator findings and state what was rejected, why it failed the proof gate or invariant, and which evidence was checked. Require the Worker's report to restate the cause and show the fix closes it rather than only the cited case. On a second counting rejection, perform the premise check and compare root causes: halt and escalate with both summaries only when the same cause recurred; when the causes are distinct, record that in Review State and dispatch the diagnosed correction. `PROOF_BLOCKED` routes to proof-path remediation, not code re-dispatch.
 <!-- OVERWATCH END -->
 
 **Log path continuity:** Use the same `log_path` as the original. The Worker overwrites the previous log. The Manager captures iteration patterns in Stage summaries when relevant.
@@ -155,7 +155,9 @@ Execute when the review outcome (per `{GUIDE_PATH:task-review}` §3.3 Review Out
 
 Perform the following actions:
 1. Capture follow-up context: what went wrong, investigation findings, required refinement, any planning document modifications.
-2. For rejected work, check Review State or working notes for prior rejection summaries for the same Task. If this would be the second rejection, do not dispatch; escalate with both rejection summaries and a recommendation.
+<!-- OVERWATCH BEGIN -->
+2. For a follow-up that directs a fix for confirmed-defect rejected or Failed work, state the diagnosed `Root Cause:`. For rejected work, check Review State or working notes for prior counting rejection summaries for the same Task. Before a second fix cycle, record whether the premise remains supported by fresh evidence and compare the current root cause with the prior one. If a second counting rejection repeats the same cause, do not dispatch; escalate with both summaries and a recommendation. If the causes are distinct, record that and continue. Route `PROOF_BLOCKED` to harness remediation, a scheduled timing window, or a headless proof path instead.
+<!-- OVERWATCH END -->
 3. If planning documents were modified, extract relevant updated content per §3.2 Per-Task Analysis.
 4. Refine all content sections per §2.3 Follow-Up Standards. Include a follow-up context section explaining the issue and required refinement.
 5. Construct the follow-up prompt per §4.2 Follow-Up Format. Same `log_path` as the original.
@@ -201,7 +203,7 @@ has_dependencies: true
 - *Objective:* Single-sentence Task goal, optionally enhanced with coordination-level context.
 - *Detailed Instructions:* Plan steps transformed into actionable instructions with integrated Spec content and guidance.
 <!-- OVERWATCH BEGIN -->
-- *Proof Discipline:* Worker-facing proof gate when useful: invariant to close, explicit non-scope or compatibility constraints, and required proof path. Instruct the Worker to use THINK / WORK / TRY: inspect current code and Task context, name the invariant and hazards, verify or reproduce the premise before fixing, map relevant readers or writers when applicable, make a narrow in-scope change, then prove Task-relative behavior through the real path when practical.
+- *Proof Discipline:* Required for non-trivial work and optional when useful for trivial work: invariant to close, explicit non-scope or compatibility constraints, required proof path, and the negative control or sabotage the Adversarial Critic would run (for example, replacing the changed behavior with a no-op must fail a test). When a negative control is impractical, require the reason and strongest substitute. Instruct the Worker to use THINK / WORK / TRY: inspect current code and Task context, name the invariant and hazards, verify or reproduce the premise before fixing, map relevant readers or writers when applicable, make a narrow in-scope change, then demonstrate the front-loaded negative control and Task-relative behavior through the real path when practical.
 <!-- OVERWATCH END -->
 - *Workspace:* Working directory and branch name for sequential dispatch, or worktree path and project root for parallel dispatch. For worktree dispatch, instruct the Worker to perform code work in the worktree but resolve all `.apm/` paths (Task Log, bus files) from the project root. Worker operates in the specified workspace, commits there, and notes it in the Task Log. Workers do not merge.
 - *Expected Output:* Deliverables from Plan Output field.
@@ -226,7 +228,7 @@ Follow-up Task Prompts use the same structure as §4.1 Task Prompt Format with t
 - *Title:* `APM Follow-Up Task: <Task Title>`
 - *Follow-up context section* after Task Reference - previous issue, investigation findings, required refinement, additional guidance.
 <!-- OVERWATCH BEGIN -->
-- *Rejection findings section* when the follow-up comes from rejected work - review verdict, what was rejected and why, critic or validator findings, evidence checked, and targeted instructions to address those findings from existing context.
+- *Rejection findings section* when the follow-up comes from confirmed-defect rejected work - review verdict, what was rejected and why, critic or validator findings, evidence checked, a `Root Cause:` line distinct from the symptom, and targeted class-level instructions. Require the report to restate the cause fixed and show the fix addresses it, not only the cited failing case.
 <!-- OVERWATCH END -->
 - *All content sections* refined based on what went wrong, not copied from the previous attempt.
 - *Same `log_path`* as the original Task Prompt.
