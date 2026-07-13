@@ -24,7 +24,7 @@ title: <Project Name>
 <!-- OVERWATCH BEGIN -->
 ## Review State
 
-<!-- Record active review verdicts, residuals, rejection summaries, rejection counts, active Worker monitoring state, stall interventions, orphaned WIP adoption notes, and escalation counts that affect dispatch, merge, Handoff, or escalation decisions. Remove or distill entries once they are no longer operationally needed. -->
+<!-- Record Task Base/validated commit hashes, review surface, finding classification and disposition, Correction Envelopes, residuals, rejection/root-cause counts, remediation time or token spend, active Worker progress signals, bounded next checks, interventions, and escalation counts. Remove or distill entries once they are no longer operationally needed. -->
 
 <!-- OVERWATCH END -->
 

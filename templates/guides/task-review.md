@@ -53,7 +53,15 @@ After reviewing a Task Log, determine the review outcome.
 - If investigation reveals deficiencies in previously-Done work, create a new Task through Plan modification per §2.3 Planning Document Modification Standards. The original Task remains Done; reference it from the new Task, include the discovery context, and specify what needs correction.
 
 <!-- OVERWATCH BEGIN -->
-**Review paths:** Use lightweight validation for trivial contained work. Use a two-critic gate for non-trivial work: the Test Gate Critic checks whether proof exercises the Task trajectory and was not weakened; the Adversarial Change Critic checks whether the change structurally closes the invariant, treats narratives as untrusted, and demonstrates the front-loaded negative control or records why one is impractical and the strongest substitute used. Critics inspect actual diffs, artifacts, or command output.
+**Risk-triggered review paths:** Low-risk work receives one compact Manager critic pass. Escalate to one independent critic if the diff adds a file, dependency, infrastructure, or artifact not named in the brief or Scope Fence, or if Manager rejection and re-review occurs more than once. Security, privacy, schema, API, release-critical, multi-module, or demonstrated false-green risk receives two independent critics: the Test Gate Critic checks Task-trajectory proof and the Adversarial Change Critic checks structural closure and narrative skepticism. Require a negative control only when false-green risk is plausible.
+
+**Commit-pinned critic reports:** Every critic report states `Task Base Commit`, exact `Validated Commit`, `Validated Tree`, review surface, and evidence references. Before acting, verify the current and pushed/pinned commit equals `Validated Commit`; mismatch makes the report void. Amend or rebase requires a new report. Store the report outside the validated commit so it does not invalidate itself; commit durable evidence before review.
+
+**Token-efficient critic reports:** Review the pinned diff plus immediate callers/callees, direct consumers/producers, and the production-real artifact needed for cross-abstraction proof. Shared schemas, APIs, authorization rules, or generated templates permit a targeted reference inventory, not open-ended repo exploration. Cite evidence by path, result, and hash instead of quoting logs; full logs live in committed evidence files and are referenced once. After rejection, re-check only rejected findings against the amended diff unless files outside the original review surface changed; then perform a full review.
+
+**Plan-bound adjudication:** Critics identify defects but cannot expand the Plan. Give every finding one logged disposition: `FIX_IN_SCOPE`, `DEFER_RESIDUAL`, `PROPOSE_PLAN_CHANGE`, `ACCEPT_RISK`, or `REJECT_FINDING`; advisory means triaged, never dropped. The Manager chooses the smallest sufficient correction inside the Scope Fence. Out-of-fence remediation may only use `PROPOSE_PLAN_CHANGE`; significant changes and `ACCEPT_RISK` for security, privacy, legal, financial, data-loss, contract, or launch risk require User approval.
+
+**Introduced-here classification:** Before escalating a finding, compare it with the Task Base Commit and record `INTRODUCED_HERE` when the Task introduced, materially worsened, or made it newly reachable, otherwise `PRE_EXISTING`. Pre-existing findings default to `DEFER_RESIDUAL` and enter the backlog/deferral record; send them to User adjudication only for security/privacy compromise, irrecoverable data loss, financial/legal exposure, broken external contracts, silent corruption, or catastrophic failure.
 
 **Root cause before fix:** No fix may begin on a rejected or Failed Task until a diagnosed cause is stated. A fix that changes behavior without naming why the defect occurred is a rejectable outcome even if validation passes. Every follow-up Task Prompt that directs a fix for confirmed-defect rejected or Failed work carries a `Root Cause:` line, distinct from the symptom. On a repeat rejection, compare the new root cause to the prior one: if the underlying cause recurs, the prior fix was a patch — require a class-level fix, not another patch. This applies to diagnosis as well as code.
 
@@ -61,9 +69,13 @@ After reviewing a Task Log, determine the review outcome.
 
 **Premise re-examination:** Before authorizing a second rejection or fix cycle, re-examine the premise: is the hypothesis still supported by fresh evidence, or is it anchoring? Separate "the work is wrong" from "my diagnosis is wrong," and record the check in Review State.
 
+**Correction Envelope:** For `FIX_IN_SCOPE`, record the Plan requirement, minimum sufficient correction, inventory boundary, allowed scope, non-scope, required proof, and expansion disposition. A first pattern-class rejection requires inventory of the Plan-defined target set, correction of every in-scope match, and reporting without modification of out-of-scope matches.
+
+**Remediation value gate:** Two counting rejections with the same root cause halt. Three total counting rejections, remediation above roughly 50% of the original Task's time or token cost, or 60-90 minutes of unsuccessful autonomous remediation triggers a value review: assess probability × impact, reversibility, cheap mitigation, and whether deferral is safer. Multi-hour continuation always requires an explicit Plan change and User approval. Record the selected disposition and cumulative spend in Review State.
+
 **Review verdicts:** Record one review evidence label when helpful: `MERGE_OK` (clean acceptance), `MERGED_WITH_RESIDUALS` (proceeding with explicit residuals), `FIX_FIRST` (follow-up required before acceptance, confirmed defect), `REVERT_OR_ROLL_FORWARD` (revert or correct forward, confirmed defect), or `PROOF_BLOCKED` (proof unobtainable for environmental reasons — credential/auth prompt, harness crash, focus contention, external outage, missing timing window — with no defect shown). Distinguish "the test failed" (defect) from "the test could not run or complete" (blocked) by inspecting the actual failure signature. These labels do not replace Task lifecycle states or Task Log statuses.
 
-**Rejected work:** A `FIX_FIRST` or `REVERT_OR_ROLL_FORWARD` finding creates a rejection summary: verdict, what was rejected and why, evidence checked, critic or validator findings, root cause, and required correction. Attach it to the follow-up Task Prompt. Only confirmed-defect verdicts count toward the halt check; `PROOF_BLOCKED` and spec-corrections do not. Track `PROOF_BLOCKED` in Review State as an environmental residual, where it may remain without accruing rejections, and route it to harness remediation, a scheduled timing window, or a headless proof path — not a worker code re-dispatch. On a second counting rejection, compare root causes: if the same cause recurred, halt dispatch and escalate to the User with both summaries and your recommendation; if the causes are distinct, record that in Review State and proceed with the diagnosed correction.
+**Rejected work:** A `FIX_FIRST` or `REVERT_OR_ROLL_FORWARD` finding creates a rejection summary with the pinned commit, classification, disposition, root cause, rejected invariant, evidence references, and Correction Envelope. Only confirmed-defect verdicts count; `PROOF_BLOCKED` and spec-corrections do not. Track `PROOF_BLOCKED` as an environmental residual and route it to harness remediation, a scheduled timing window, or a headless path — not code re-dispatch. Apply the value gate before another follow-up.
 <!-- OVERWATCH END -->
 
 Small contained actions (follow-ups for isolated issues, minor planning document corrections) can be executed immediately during the review cycle - present findings to the User for awareness after acting. When changes are significant enough to affect project direction or scope, pause for User approval per §2.3 Planning Document Modification Standards.
@@ -88,6 +100,8 @@ When multiple Workers are active simultaneously, coordinate asynchronously.
 
 <!-- OVERWATCH BEGIN -->
 **Autonomous monitoring:** When direct subagent operation is available, poll active Workers every 5-10 minutes, or every 2-5 minutes for tiny or near-complete Tasks. Observable progress means Task Log update, file change, running test, Report Bus update, commit, or new concrete blocker. Track last progress signal, stale poll count, repeated blocker count, and any recovery action in Review State or Working Notes when it affects dispatch or Handoff.
+
+**Bounded waiting and status:** Wait only with a concrete progress signal, reason, and bounded next check; otherwise continue ready work, adopt, reassign, defer, or stop. Report Manager status only on state transitions: dispatched, passed, rejected, halted, or escalated. Do not emit interim "still waiting" updates.
 
 **Stall response:** After three stale polls or 20-30 minutes idle, intervene by inspecting logs, worktrees, branches, running processes, or reports; recovering or resuming the Worker; adopting the work directly; or splitting/re-dispatching if the original unit is too large. The same blocker across three attempts becomes `BLOCKED` and escalated. Long or high-risk Tasks have a soft 60-90 minute cap before recovery or splitting.
 
@@ -171,12 +185,20 @@ Perform the following actions:
 Execute after Task Log review.
 
 Perform the following actions:
-1. Review findings from the Task Log per §2.2 Review Outcome Standards. Assess deliverables against the Task's objectives and validation criteria before determining the outcome. If version control is active and the Task was successful but changes remain uncommitted on the Task branch, commit on behalf following the conventions from Rules - no follow-up needed. If everything looks good, skip to step 3. If something needs attention, continue to step 2.
+1. Review findings from the Task Log per §2.2 Review Outcome Standards. Assess deliverables against the Task's objectives and validation criteria before determining the outcome. If version control is active and the Task was successful but changes remain uncommitted on the Task branch, commit on behalf following the conventions from Rules - no follow-up needed.
+   <!-- OVERWATCH BEGIN -->
+   - Select the risk-triggered review path. The Manager's low-risk pass is itself a critic report; independent critics are required by the escalation conditions in §2.2.
+   - Record the Task Base Commit and exact Validated Commit, verify the current and pushed/pinned commit match it, define the bounded review surface, and cite durable evidence by path, result, and hash. Treat a stale report as void.
+   <!-- OVERWATCH END -->
+   If everything looks good, skip to step 3. If something needs attention, continue to step 2.
 2. Investigate and determine outcome per §2.2 Review Outcome Standards:
    - If no issues are found, continue to step 3.
    - If the Worker needs a follow-up, create a follow-up Task Prompt per `{GUIDE_PATH:task-assignment}` §3.4 Follow-Up Task Prompt Construction and continue to step 3.
    - If planning documents need modification, proceed to §3.4 Planning Document Modification (returns to step 3 after completion).
-3. Record any review verdict, residuals, or rejection summary in Review State or Working Notes when it affects future dispatch, merge, or Handoff decisions.
+   <!-- OVERWATCH BEGIN -->
+   - Give every finding a disposition. Before escalation, classify it against the Task Base Commit. Before remediation, diagnose the root cause, apply the value gate, and create the Correction Envelope; a pattern-class rejection also receives its Plan-defined inventory boundary.
+   <!-- OVERWATCH END -->
+3. Record the critic path and pinned hash, each finding's classification and disposition, any review verdict or residual, rejection/root-cause counts, remediation spend, and any Correction Envelope in Review State when they affect future dispatch, merge, or Handoff decisions.
 4. Update the Tracker per §4.1 Task Tracking Format: mark completed Tasks as Done only when review concludes without outstanding follow-up, reassess Waiting Tasks for readiness, update branches. Execute pending merges per §2.5 Merge Standards before reassessing readiness. Assess whether the review yielded note-worthy context and add to working notes - both ephemeral coordination items and durable observations for later distillation. Remove stale working notes. Batch all changes from this review-dispatch cycle into a single Tracker edit.
 5. Assess next action per §2.4 Parallel Coordination Standards:
    - If all Stage Tasks are Done and merged, collapse Stage per §4.1 Task Tracking Format and proceed to §3.5 Stage Summary Creation.
