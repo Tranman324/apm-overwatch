@@ -126,6 +126,12 @@ Present reasoning under the header **Plan Analysis:** with sub-headers **Domain 
        - *Task scope:* what is the Task's scope? Is the User involved in any steps?
        - *Task guidance:* implementation context the Worker needs, including domain-specific patterns (how to structure code, existing patterns to follow), constraints (performance, security, dependencies), technical decisions (library choices, API contracts), single-domain details (validation approach, testing strategy, error handling specifics). Include context classified as Task-scoped per §3.1 Spec Analysis. For design decisions already in the Spec, reference the Spec section per §2.4 Plan Standards rather than restating, adding domain-specific context as needed.
        - *Task validation:* concrete criteria that verify the Task's deliverables - what to check and how. Note where User involvement is needed. Validation criteria co-define the Task with Guidance.
+       <!-- OVERWATCH BEGIN -->
+       - *Invariant and closure:* Assign a stable `I-<Stage>.<Task>` identifier and declare the truth that must remain true, its owning layer, the layer this Task changes, and `CLOSEABLE_HERE`, `MITIGATION_ONLY`, or `UNKNOWN`. A layer mismatch must move the fence, become mitigation with a named residual, defer to the owning phase, or become a spike; do not broaden the Task to make the declaration true. `UNKNOWN` is a no-production-change spike first, with an inventory, owning-layer recommendation, and Plan-change or deferral recommendation as its output.
+       - *Likely rejection:* Write one Plan-bounded pre-mortem sentence: `Likely rejection: <how this Task could fail its invariant or proof>`. Inability to name one is evidence to investigate closure before dispatch, not a reason to invent broader work.
+       - *State/reaction-path evidence (conditional):* A Task adding or gating writes to shared, auth, concurrency, cross-session, or otherwise shared mutable state inventories all known direct writers, wrappers, queued or deferred operations, shared clients, immediate callers, and subscriptions, listeners, event handlers, timers, or callbacks reacting to that state or its events. Cite the inventory by path and result; the fence covers every in-scope path or names exceptions.
+       - *Mitigation consequences:* `MITIGATION_ONLY` names a residual risk and a critic check proving the mitigation contains rather than masks it. The Task title and objective describe mitigation, never full closure.
+       <!-- OVERWATCH END -->
        - *Dependencies:* same-agent as `Task N.M`, cross-agent as **`Task N.M by <Agent>`** (bolded), specifying the deliverable at the boundary.
        - *Steps:* ordered operations building toward Task completion.
      Every Task aspect must be addressed - depth varies with complexity but coverage does not. Steps incorporate guidance. After each Stage, assess whether each Task represents independently validatable work per §2.2 Decomposition Principles.
@@ -133,7 +139,7 @@ Present reasoning under the header **Plan Analysis:** with sub-headers **Domain 
    <!-- OVERWATCH BEGIN -->
    - *Title-scope alignment.* Give each Task a literal deliverable title that matches its scope and validation; avoid aspirational umbrella titles that imply broader architecture or completeness. Make expected artifacts and explicit non-scope clear enough for the Manager's Scope Fence.
    <!-- OVERWATCH END -->
-   - *Pre-write checks.* Verify the analysis is complete: every Task was analyzed with all aspects covered (Worker assignment, scope, guidance, validation, dependencies, steps), workload is reasonably distributed across Workers, all cross-agent dependencies are identified, and notes for the Manager are ready per §2.1 Workflow Context. Correct issues before proceeding.
+   - *Pre-write checks.* Verify the analysis is complete: every Task was analyzed with all aspects covered (Worker assignment, scope, guidance, validation, invariant/closure, likely rejection, dependencies, steps), workload is reasonably distributed across Workers, all cross-agent dependencies are identified, and notes for the Manager are ready per §2.1 Workflow Context. Correct issues before proceeding.
 2. Read `.apm/plan.md`, then write the full Plan per §4.2 Plan Format. Set `title` to the project name (same as Spec) and `modified` to "Plan creation by the Planner." Enrich Task details from reasoning. Ensure every cross-agent dependency is bolded at write time. Include the Dependency Graph in the Plan header.
 3. Pause for User review:
    - State the Plan is complete and the artifact is created. Present a summary to the User: Worker count, Stage count with names and Task counts, total Tasks, dispatch patterns.
@@ -219,6 +225,13 @@ Below the frontmatter, the document starts with `# APM Plan` followed by the Pla
 * **Output:** [Concrete deliverables - files, components, artifacts produced.]
 * **Validation:** [Concrete pass/fail criteria. Note where User involvement is needed.]
 * **Guidance:** [Technical constraints, approach specifications, references to existing patterns, User collaboration patterns.]
+<!-- OVERWATCH BEGIN -->
+* **Invariant:** `I-<N>.<M>`: [Truth] | owner: [layer] | fix: [layer] | closure: `CLOSEABLE_HERE` / `MITIGATION_ONLY` / `UNKNOWN`.
+* **Likely Rejection:** [One Plan-bounded pre-mortem sentence.]
+* **State/Reaction-Path Evidence:** [Path + result; required only for shared-state/auth/concurrency/cross-session writes or reactions.]
+* **Residual Risk:** [Required for `MITIGATION_ONLY`; otherwise omit.]
+* **Critic Check:** [Required for `MITIGATION_ONLY`: containment check, not a claim of closure.]
+<!-- OVERWATCH END -->
 * **Dependencies:** [Prior Task outputs required. Use `Task N.M by <Domain> Agent, ...` format. Bold cross-agent dependencies. Use "None" when no dependencies exist.]
 
 1. [Step description]
@@ -276,7 +289,7 @@ APM_RULES {
 **Content rules:** No content outside the APM_RULES block unless explicitly requested. Use markdown headings (`##`) for categories. Each standard must be concrete and actionable. Only universal execution-level patterns - not architecture decisions, Task-specific guidance, or coordination decisions. Reference existing standards outside the block rather than duplicating.
 
 <!-- OVERWATCH BEGIN -->
-**Overwatch QA gate rule shape:** When QA gate rules are warranted, keep them self-contained inside APM_RULES. Low-risk work receives one compact Manager critic pass, with independent escalation for files, dependencies, infrastructure, or artifacts not named in the brief or Scope Fence, or for repeated Manager rejection/re-review; security, privacy, schemas, APIs, release-critical behavior, multi-module changes, or demonstrated false-green risk receives Test Gate and Adversarial Change critics. Require a negative control only for plausible false-green risk. Reports pin the validated commit and cite evidence by path, result, and hash. State the coverage boundary directly: execution-layer failures are in scope; spec/promise drift, product gaps, requirement misreads, and promises dropped from planning documents are not solved.
+**Overwatch QA gate rule shape:** When QA gate rules are warranted, keep them self-contained inside APM_RULES. Low-risk work receives one compact Manager critic pass, with independent escalation for files, dependencies, infrastructure, or artifacts not named in the brief or Scope Fence, or for repeated Manager rejection/re-review; security, privacy, schemas, APIs, release-critical behavior, multi-module changes, or demonstrated false-green risk receives Test Gate and Adversarial Change critics. Require a negative control only for plausible false-green risk. Reports pin the validated commit and cite evidence by path, result, and hash. State the coverage boundary directly: Overwatch can scrutinize declared invariant layers and state/reaction-path coverage, but does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or promises dropped from planning documents.
 <!-- OVERWATCH END -->
 
 ---

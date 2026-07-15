@@ -13,7 +13,7 @@ Public fork notes:
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
 - [Fork Maintenance](docs/FORK-MAINTENANCE.md)
 
-Overwatch v1 targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It does not claim to solve spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
+Overwatch targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch; it does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
 
 ---
 

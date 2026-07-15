@@ -4,7 +4,8 @@
   "description": "Agentic Project Management CLI",
   "scripts": {
     "build": "node build/index.js",
-    "build:release": "node build/index.js"
+    "validate:overwatch": "node scripts/validate-overwatch-v4.mjs",
+    "build:release": "node scripts/validate-overwatch-v4.mjs && node build/index.js"
   },
   "repository": {
     "type": "git",

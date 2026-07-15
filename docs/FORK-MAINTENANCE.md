@@ -91,6 +91,8 @@ Do not tag, push, create GitHub releases, or accept post-release launch risk fro
 
 ## Coverage Boundary
 
-Overwatch v1 catches execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output.
+Overwatch catches execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch.
 
-Overwatch v1 does not solve spec/promise drift, product gaps, requirement misreads, or planning promises that implementation quietly drops.
+Overwatch does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises that implementation quietly drops.
+
+External brief authors use [the spec-authoring checklist](SPEC-AUTHORING-CHECKLIST.md) so their briefs carry the same invariant, closeability, state/reaction-path, residual, and pre-mortem information as Planner-produced Tasks.
