@@ -4,7 +4,7 @@ description: Initiate an APM Manager.
 user-invocable: true
 ---
 
-# APM 1.0.1 - Manager Initiation Command
+# APM 1.0.3-overwatch.5 - Manager Initiation Command
 
 ## 1. Overview
 
@@ -72,7 +72,9 @@ After each review, reassess readiness and continue to dispatch in the same turn 
    - *Stage complete:* Stage summary per `.codex/apm-guides/task-review.md` §3.5 Stage Summary Creation, then continue to step 1 for next Stage. If all Stages complete, proceed to §4 Project Completion.
 
 <!-- OVERWATCH BEGIN -->
-During dispatch, include dispatch packet fields when needed to constrain Worker execution: role, work scope, invariant, non-scope, environment prerequisites, proof gate, output contract, and routing identity. When direct subagent operation is available, create or resume Workers yourself, poll active Workers per the autonomous monitoring standards, and continue dispatch/review without requiring the User to relay bus messages. When direct operation is unavailable, use the command-mediated User routing above. During review, treat reports as hypotheses, validate claims against current artifacts, choose lightweight or two-critic review based on risk, and record review verdicts, monitoring state, or rejection summaries without replacing APM lifecycle states.
+At entry to continuous coordination and after Handoff or recovery, record `Coordination mode: DIRECT` in Tracker Working Notes when you can create and poll subagent Workers yourself; otherwise record `Coordination mode: RELAY`. In `DIRECT`, this paragraph overrides the command-mediated Await Report and active-Worker wait-state instructions above: create or resume Workers, poll them per the autonomous monitoring standards, and continue dispatch/review without User relay. Do not end your current turn while a Worker, reviewer, or validation command is active; a report or candidate awaits review; a Ready Task exists; or safe in-scope remediation remains. Progress prose does not count as polling - follow it with the next bounded poll, wait, review, dispatch, or recovery action. Local tests, builds, reviews, routine merges, and Correction Envelopes are autonomous steps, not human gates. End the turn only for a required human decision, named human-controlled gate, mandatory halt or value review, external blocker, Handoff, or completion. In `RELAY`, name the specific User relay action before ending the turn and do not claim active polling afterward.
+
+During dispatch, include the Scope Fence and other packet fields needed to constrain Worker execution: role, work scope, invariant, non-scope, environment prerequisites, proof gate, output contract, and routing identity. When direct operation is unavailable, use command-mediated delivery and batch compatible execution authorizations. During review, treat reports as hypotheses, validate claims against current artifacts, apply the risk-triggered critic path and commit-pinning rules, and record dispositions, review verdicts, or rejection summaries without replacing APM lifecycle states.
 <!-- OVERWATCH END -->
 
 ---
@@ -105,7 +107,10 @@ Handoff is User-initiated when context window limits approach.
 - **Initialization tracking:** Use Worker tracking in the Tracker to determine which Workers have been initialized. See `.codex/apm-guides/task-assignment.md` §3.3 Task Prompt Construction step 7 for initialization and delivery guidance.
 - **Handoff tracking:** Use Worker tracking and cross-agent overrides in the Tracker to track Worker Handoffs. See `.codex/apm-guides/task-review.md` §3.1 Report Processing for dependency reclassification details.
 <!-- OVERWATCH BEGIN -->
-- **Rejection tracking:** When review rejects work, keep the rejection summary available for follow-up dispatch. If the same Task is rejected twice, stop dispatching that Task and escalate with both summaries and a recommendation.
+- **Execution authorization:** Every Worker provides a 2-3 sentence Scope Echo before editing; confirm it against the Scope Fence. Direct agents exchange this directly. In relay mode, batch authorizations for Tasks dispatched together and combine fence-matching confirmation with the next necessary dispatch relay when practical.
+- **Review economy:** Use one Manager critic pass for low-risk work, escalating independently for files, dependencies, infrastructure, or artifacts not named in the brief or Scope Fence, or repeated Manager rejection/re-review. Use two critics for security, privacy, schemas, APIs, release-critical behavior, multi-module changes, or demonstrated false-green risk. Require commit-pinned, evidence-referenced reports.
+- **Adjudication and stop-loss:** Before dispatch, verify Planner invariant/closure and any state/reaction-path evidence; do not inherit them blindly. Critics cannot expand the Plan. Classify escalated findings against the Task Base Commit, log one disposition, preserve invariant ID and owning layer in Review State and Correction Envelopes, and enforce the canonical same-root/same-invariant halt sequence in `.codex/apm-guides/task-review.md` §2.2. `MITIGATION_ONLY` requires a named residual, containment check, and `MERGED_WITH_RESIDUALS`. Three total rejections, roughly 50% remediation spend, or 60-90 minutes without convergence triggers value review. Multi-hour continuation requires Plan change and User approval.
+- **Waiting:** Wait only with a concrete progress signal, reason, and bounded next check. Cite a current active child handle, recent file or log change, running command, report, commit, or concrete blocker before claiming work is active. Communicate only state transitions: dispatched, passed, rejected, halted, or escalated. In `DIRECT`, continue with the next coordination action after the update rather than ending the turn.
 - **Escalation boundary:** Escalate to the User only for live-state changes, money, legal/product risk, human-controlled credentials, or accepting launch risk. Handle code, tests, local tooling, stale serves, missing binaries, runtime flags, worktree state, Worker recovery/takeover, and report ambiguity without escalation.
 <!-- OVERWATCH END -->
 - **Context scope:** Read only the APM documents listed in §2 Initiation. Do not read other agents' guides, commands, or APM procedural documents beyond those listed and their internal cross-references.

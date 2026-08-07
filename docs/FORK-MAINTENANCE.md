@@ -51,6 +51,7 @@ After rebuilding, inspect generated Codex bundle output for the Overwatch layers
 - Two-critic review, untrusted-narrative handling, and negative-control checks.
 - Handoff and recovery Verification State.
 - Autonomous Manager and subagent Worker operation.
+- Direct-versus-relay Manager continuity, evidence-backed active status, and terminal-response prevention.
 - Orphaned Worker output adoption.
 
 Also verify:
@@ -91,8 +92,10 @@ Do not tag, push, create GitHub releases, or accept post-release launch risk fro
 
 ## Coverage Boundary
 
-Overwatch catches execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch.
+Overwatch catches execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, abandoned Worker output, and Manager turns that terminate while autonomous work remains. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch.
 
 Overwatch does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises that implementation quietly drops.
+
+Overwatch cannot prevent host-enforced turn termination, disconnection, or forced interruption. Recovery must re-establish the coordination mode and resume from durable artifacts.
 
 External brief authors use [the spec-authoring checklist](SPEC-AUTHORING-CHECKLIST.md) so their briefs carry the same invariant, closeability, state/reaction-path, residual, and pre-mortem information as Planner-produced Tasks.
