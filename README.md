@@ -10,8 +10,8 @@ apm custom -r Tranman324/apm-overwatch
 
 Public fork notes:
 
-- [Current Design Draft](docs/OVERWATCH-DESIGN-DRAFT.md)
-- [Spec Restructuring Proposal](docs/OVERWATCH-SPEC-RESTRUCTURE-PROPOSAL.md)
+- [Current Design](docs/OVERWATCH-DESIGN.md)
+- [Archived Original Specification](docs/archive/README.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
 - [Fork Maintenance](docs/FORK-MAINTENANCE.md)
 

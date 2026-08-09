@@ -1,6 +1,6 @@
-# APM Overwatch Current Design - Draft
+# APM Overwatch Current Design
 
-**Status:** Draft for Athena review
+**Status:** Current policy; live V5 `DIRECT` compliance remains unproven
 
 **Updated:** 2026-08-09
 
@@ -55,11 +55,13 @@ Overwatch cannot prevent host-enforced timeout, disconnection, compaction, or fo
 
 | Risk | Current Control | Evaluation Signal |
 | --- | --- | --- |
-| Manager instruction density | Risk-triggered procedures and surgical re-review | After 2-3 live sessions, identify rules that were skipped, duplicated, or did not affect a decision. Do not remove rare catastrophic-risk controls solely because they did not fire. |
+| Manager instruction density | Risk-triggered procedures and surgical re-review | Apply the empirical pruning rule after each 2-3-session window. |
 | Voluntary versus host-forced exit | Direct-mode terminal guard plus recovery | Separate policy violations from platform termination in session review. |
 | Behavioral proof gap | V5 source and bundle validators | Run one live `DIRECT` Task cycle without mid-task User prompting before broad deployment. |
 | Upstream template drift | Overwatch markers and documented sync procedure | Rebuild and inspect all bundles after every upstream sync. |
 | Spec/promise drift | Planner invariant and closure scrutiny | Treat residual product-intent gaps as a separate future capability, not an Overwatch execution claim. |
+
+**Empirical pruning:** After each 2-3-session window, keep rules that changed a decision; prune rules that triggered without value or duplicate another control. A never-exercised rule receives one challenge-test window across the next 2-3 sessions, then prunes if it cannot be exercised or still never fires. Rare-disaster controls for security, privacy, legal, financial, irreversible data loss, contracts, corruption, or catastrophic failure are exempt. New rules must displace or consolidate existing text.
 
 ## References
 
@@ -69,4 +71,5 @@ Overwatch cannot prevent host-enforced timeout, disconnection, compaction, or fo
 - [`templates/guides/task-assignment.md`](../templates/guides/task-assignment.md) and [`templates/guides/work-breakdown.md`](../templates/guides/work-breakdown.md) - scope and planning controls.
 - [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) - attribution and adapted-source record.
 - [`FORK-MAINTENANCE.md`](FORK-MAINTENANCE.md) - upstream sync and release procedure.
+- [`archive/README.md`](archive/README.md) - superseded original brief and integrity metadata.
 - [`v1.0.2-overwatch.1`](https://github.com/Tranman324/apm-overwatch/releases/tag/v1.0.2-overwatch.1) - original shipped release history.
