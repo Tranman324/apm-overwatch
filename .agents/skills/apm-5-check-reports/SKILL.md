@@ -4,7 +4,7 @@ description: Deliver a Task Report to an APM Manager.
 user-invocable: true
 ---
 
-# APM 1.0.1 - Manager Check Reports Command
+# APM 1.0.3-overwatch.5 - Manager Check Reports Command
 
 Check Report Bus(es) for pending Task Reports. If you are a Planner, Worker, or non-APM agent, concisely decline and take no action. This replaces manual file referencing - scan bus directories or check a specific Worker's Report Bus.
 

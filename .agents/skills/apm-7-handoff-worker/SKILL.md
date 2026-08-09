@@ -4,7 +4,7 @@ description: Perform a Handoff with an APM Worker.
 user-invocable: true
 ---
 
-# APM 1.0.1 - Worker Handoff Command
+# APM 1.0.3-overwatch.5 - Worker Handoff Command
 
 ## 1. Overview
 

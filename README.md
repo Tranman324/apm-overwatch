@@ -10,10 +10,12 @@ apm custom -r Tranman324/apm-overwatch
 
 Public fork notes:
 
+- [Current Design](docs/OVERWATCH-DESIGN.md)
+- [Archived Original Specification](docs/archive/README.md)
 - [Third Party Notices](THIRD_PARTY_NOTICES.md)
 - [Fork Maintenance](docs/FORK-MAINTENANCE.md)
 
-Overwatch targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, and abandoned Worker output. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch; it does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
+Overwatch targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, abandoned Worker output, and Manager turns that terminate while autonomous work remains. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch. It cannot prevent host-enforced turn termination or disconnection; recovery resumes from durable artifacts. It does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
 
 ---
 
