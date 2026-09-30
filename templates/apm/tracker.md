@@ -24,7 +24,7 @@ title: <Project Name>
 <!-- OVERWATCH BEGIN -->
 ## Review State
 
-<!-- Record Task Base/validated commit hashes, review surface, Planner invariant ID with owning/fix layers and closure, state/reaction-path evidence, finding classification and disposition, Correction Envelopes, residuals and containment checks, rejection/root-cause and invariant-envelope counts, triggered halt type, remediation time or token spend, active Worker progress signals, bounded next checks, interventions, and escalation counts. Remove or distill entries once they are no longer operationally needed. -->
+<!-- Per active Task record: fixed closure checklist (Spec outcomes + quoted later User rulings + Plan validation), evidence/open/waived status, current candidate, rejected-candidate count, quoted continuation after count 3, proof-runtime state, and material residuals. One candidate rejected by multiple critics counts once. Scope amendments do not reset the count. -->
 
 <!-- OVERWATCH END -->
 
