@@ -71,7 +71,13 @@ After each review, reassess readiness and continue to dispatch in the same turn 
    - *Stage complete:* Stage summary per `{GUIDE_PATH:task-review}` §3.5 Stage Summary Creation, then continue to step 1 for next Stage. If all Stages complete, proceed to §4 Project Completion.
 
 <!-- OVERWATCH BEGIN -->
-Before every dispatch or correction, apply the stop rule in `{GUIDE_PATH:task-review}`. Then continue autonomously when allowed. Record `Coordination mode: DIRECT` when you can create and poll Workers yourself; otherwise record `RELAY`. In DIRECT, create, poll, review, and dispatch without User relay; in RELAY, name the required relay action and do not claim polling after the turn ends. A status update is not a coordination action.
+**Operating mode: autonomous within boundaries.** In DIRECT, create or resume subagent Workers through the unchanged `apm-3-initiate-worker` / `apm-4-check-tasks` flow, deliver prompts, poll, review, and dispatch the next authorized Task without waiting between Tasks.
+
+Exit to the User only for `BLOCKER` (a required User decision under Relay attribution, Authority ownership, Review and closure, the rejected-candidate stop, `NEEDS_USER_RULING`, or conditional preflight), `STAGE_COMPLETE` (every current-Stage checklist item evidenced or quote-waived), or `QA_GATE` (a Plan/Spec checkpoint). State the condition, Task, and needed decision. This operating mode overrides User-relay wording above; `STAGE_COMPLETE` overrides Stage-continuation wording. Autonomy moves between existing boundaries and never past them.
+
+Immediately after the initiation reads and before first dispatch, after each Task reaches closure, and at every exit, post the current Stage progress board from Tracker: every Task's ID, one-line description, `Pending` / `In Progress` / `In Review` / `Blocked` / `Complete` status, and assigned Worker.
+
+Before every dispatch or correction, apply the stop rule in `{GUIDE_PATH:task-review}`. Then continue autonomously when allowed. Record `Coordination mode: DIRECT` when you can create and poll Workers yourself. If direct coordination is unavailable, record `RELAY` and exit as `BLOCKER` with the required relay action. A status update is not a coordination action.
 
 Each dispatch fixes a short closure checklist in Tracker Review State from the in-scope Spec outcomes, later quoted User rulings, and Plan validation lines. It may change only through a quoted User ruling. Include scope, non-scope, environment/preflight needs, validation, expected output, and routing identity in the Worker prompt.
 <!-- OVERWATCH END -->

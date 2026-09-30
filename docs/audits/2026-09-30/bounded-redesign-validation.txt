@@ -94,3 +94,105 @@ TOTAL before=1808 after=1739 delta=-69
 $ git diff --check
 [no output]
 [exit 0]
+
+$ final rebuild after Manager relay/kickoff wording clarification; inspect fresh archives
+
+[SUCCESS] Completed target: Codex CLI
+[SUCCESS] Generated apm-release.json
+[SUCCESS]
+Build completed successfully!
+antigravity.zip    markers=47/47 required=PASS retired-absent=PASS
+claude.zip         markers=47/47 required=PASS retired-absent=PASS
+codex.zip          markers=47/47 required=PASS retired-absent=PASS
+copilot.zip        markers=47/47 required=PASS retired-absent=PASS
+cursor.zip         markers=47/47 required=PASS retired-absent=PASS
+opencode.zip       markers=47/47 required=PASS retired-absent=PASS
+[exit 0]
+
+Amendment A1 — validation command evidence
+
+$ npm run validate:overwatch
+
+> agentic-pm@1.0.1 validate:overwatch
+> node scripts/validate-overwatch-v5.mjs
+
+PASS Planner cannot implement
+PASS Planner transition is explicit
+PASS Planner keeps discovery
+PASS Spec owns product outcomes
+PASS Spec owns invariants
+PASS Plan records closure sources
+PASS Dispatch fixes closure checklist
+PASS Closure sources include later rulings
+PASS Closure changes require ruling
+PASS Planning edits cannot invent scope
+PASS Conditional preflight permits setup
+PASS Runtime claims require proof
+PASS Rejected candidate unit
+PASS Third candidate stops task
+PASS Direct fixes cannot bypass stop
+PASS Scope amendment does not reset count
+PASS Unrelated work continues
+PASS Relay attribution
+PASS Authority ownership
+PASS Stale grants removed
+PASS Continuity checks stop first
+PASS Autonomous Manager mode
+PASS Manager exit conditions
+PASS Manager stage-complete exit
+PASS Manager QA-gate exit
+PASS Kickoff task listing
+PASS Continuous stage dispatch
+PASS Statistical honesty
+PASS Removed machinery: absent
+PASS Marker balance templates/guides/work-breakdown.md: 6/6
+PASS Marker balance templates/guides/task-assignment.md: 12/12
+PASS Marker balance templates/guides/task-review.md: 6/6
+PASS Marker balance templates/guides/task-execution.md: 4/4
+PASS Marker balance templates/commands/apm-1-initiate-planner.md: 2/2
+PASS Marker balance templates/commands/apm-2-initiate-manager.md: 2/2
+PASS Marker balance templates/apm/spec.md: 1/1
+PASS Marker balance templates/apm/tracker.md: 1/1
+PASS Marker balance templates/_standards/WORKFLOW.md: 8/8
+[exit 0]
+
+$ npm run build:release
+
+[SUCCESS] Completed target: GitHub Copilot
+[SUCCESS] Completed target: Claude Code
+[SUCCESS] Completed target: Antigravity
+[SUCCESS] Completed target: Cursor
+[SUCCESS] Completed target: OpenCode
+[SUCCESS] Completed target: Codex CLI
+[SUCCESS] Generated apm-release.json
+[SUCCESS]
+Build completed successfully!
+[exit 0]
+
+$ for each dist/*.zip: inspect all uncompressed content for balanced OVERWATCH marker counts, seven A1/stop phrases, and seven retired terms
+
+antigravity.zip    markers=47/47 required=PASS retired-absent=PASS
+claude.zip         markers=47/47 required=PASS retired-absent=PASS
+codex.zip          markers=47/47 required=PASS retired-absent=PASS
+copilot.zip        markers=47/47 required=PASS retired-absent=PASS
+cursor.zip         markers=47/47 required=PASS retired-absent=PASS
+opencode.zip       markers=47/47 required=PASS retired-absent=PASS
+[exit 0]
+
+$ compare cumulative physical lines for every redesign template: git show HEAD^:<path> versus A1 working tree
+
+ 413  401   -12 templates/_standards/WORKFLOW.md
+  15   20    +5 templates/apm/spec.md
+  31   31    +0 templates/apm/tracker.md
+  78   85    +7 templates/commands/apm-1-initiate-planner.md
+ 119  124    +5 templates/commands/apm-2-initiate-manager.md
+ 316  301   -15 templates/guides/task-assignment.md
+ 151  138   -13 templates/guides/task-execution.md
+ 373  342   -31 templates/guides/task-review.md
+ 312  309    -3 templates/guides/work-breakdown.md
+TOTAL before=1808 after=1751 delta=-57
+[exit 0]
+
+$ git diff --check
+[no output]
+[exit 0]

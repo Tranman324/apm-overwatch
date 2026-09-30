@@ -7,7 +7,7 @@ Status: draft for review; not merged, released, or installed into a live project
 
 PASS. The draft replaces the earlier invariant/envelope/value-gate machinery with four operating boundaries: a fixed closure checklist, a per-Task rejected-candidate stop, conditional preflight, and explicit Planner/authority boundaries. It adds no role, ceremony, or runtime artifact type. The closure checklist is stored in the existing Tracker Review State.
 
-The affected shipped runtime sources are 1,395 lines before and 1,340 after, a net reduction of 55 lines. Including the affected normative workflow source, the count is 1,808 before and 1,739 after, a net reduction of 69 lines.
+After Amendment A1, the affected shipped runtime sources are 1,395 lines before and 1,350 after, a net reduction of 45 lines. Including the affected normative workflow source, the count is 1,808 before and 1,751 after, a net reduction of 57 lines.
 
 ## Draft sources
 
@@ -19,21 +19,21 @@ The affected shipped runtime sources are 1,395 lines before and 1,340 after, a n
 
 ## Line-count evidence
 
-Counts use physical lines from `HEAD` versus the working-tree draft. The first eight rows are shipped by the build; `WORKFLOW.md` is normative source but is not included in the generated target archives.
+Counts use physical lines from pre-redesign commit `5f288ee` versus the A1 working tree. The first eight rows are shipped by the build; `WORKFLOW.md` is normative source but is not included in the generated target archives.
 
 | Source | Before | After | Delta |
 |---|---:|---:|---:|
 | `templates/apm/spec.md` | 15 | 20 | +5 |
 | `templates/apm/tracker.md` | 31 | 31 | 0 |
 | `templates/commands/apm-1-initiate-planner.md` | 78 | 85 | +7 |
-| `templates/commands/apm-2-initiate-manager.md` | 119 | 118 | -1 |
-| `templates/guides/task-assignment.md` | 316 | 297 | -19 |
+| `templates/commands/apm-2-initiate-manager.md` | 119 | 124 | +5 |
+| `templates/guides/task-assignment.md` | 316 | 301 | -15 |
 | `templates/guides/task-execution.md` | 151 | 138 | -13 |
 | `templates/guides/task-review.md` | 373 | 342 | -31 |
 | `templates/guides/work-breakdown.md` | 312 | 309 | -3 |
-| **Shipped runtime subtotal** | **1,395** | **1,340** | **-55** |
-| `templates/_standards/WORKFLOW.md` | 413 | 399 | -14 |
-| **All affected normative source** | **1,808** | **1,739** | **-69** |
+| **Shipped runtime subtotal** | **1,395** | **1,350** | **-45** |
+| `templates/_standards/WORKFLOW.md` | 413 | 401 | -12 |
+| **All affected normative source** | **1,808** | **1,751** | **-57** |
 
 Removed vocabulary and machinery: `SAME_ROOT_HALT`, `SAME_INVARIANT_HALT`, Correction Envelopes, remediation-value gates, invariant/owning-layer declarations, mitigation-only verdicts, Scope Echo, stale-poll counters, and time-based intervention thresholds.
 
@@ -95,12 +95,26 @@ Evidence: `/Users/jeremytran/.codex/archived_sessions/rollout-2026-07-26T19-13-2
 Exact command-output evidence is preserved in `docs/audits/2026-09-30/bounded-redesign-validation.txt`.
 
 - `npm ci` — PASS; 139 packages installed. npm reported 8 dependency audit findings (1 moderate, 7 high); no dependency or application changes were made because dependency remediation is outside this draft.
-- `npm run validate:overwatch` — PASS. Twenty-two required-policy checks, removed-machinery scan, and marker-balance checks passed.
+- `npm run validate:overwatch` — PASS. Twenty-eight required-policy checks, removed-machinery scan, and marker-balance checks passed.
 - `npm run build:release` — PASS. All six targets built: GitHub Copilot, Claude Code, Antigravity, Cursor, OpenCode, and Codex CLI.
-- Generated archive inspection — PASS for all six archives. Each contains 46 balanced `OVERWATCH BEGIN/END` marker pairs and the Planner boundary, closure checklist, rejected-candidate stop, conditional preflight, and relay-attribution phrases. Statistical-honesty text remains in the normative `WORKFLOW.md`, which the build does not package.
+- Generated archive inspection — PASS for all six archives. Each contains 47 balanced `OVERWATCH BEGIN/END` marker pairs, all A1/stop phrases, and none of the seven retired terms. Statistical-honesty text remains in the normative `WORKFLOW.md`, which the build does not package.
 - `git diff --check` — PASS.
 - Test Gate Critic — PASS after correcting report attribution and preserving exact command output. It independently verified line counts, 22 source-policy checks, all six archives, retired-term absence, and the historical authorization context.
 - Adversarial Change Critic — PASS after closing three bypasses: direct Manager correction after rejection three, unnecessary escalation for locally repairable setup, and Manager-authored product scope through a “small” planning edit.
+
+## Amendment A1 — autonomous Manager loop and kickoff board
+
+A1 adds no role, artifact, ceremony, or counter. The progress board is a chat rendering of existing Tracker Task state. From the bounded-redesign commit to A1, shipped templates increase by 10 lines (`apm-2-initiate-manager.md` +6, `task-assignment.md` +4); the normative workflow adds 2 lines. The combined redesign remains 45 shipped lines smaller than its pre-redesign baseline.
+
+The Manager now drives the unchanged `apm-3-initiate-worker` / `apm-4-check-tasks` flow through the current Stage. It exits only on `BLOCKER`, `STAGE_COMPLETE`, or `QA_GATE`, and posts the Tracker-backed progress board before first dispatch, after Task closure, and at every exit. The autonomy rule cites the existing rejected-candidate stop, `NEEDS_USER_RULING`, Relay attribution, Authority ownership, Review and closure, and conditional preflight rather than redefining them.
+
+| Frozen stop case | A1 replay | Result |
+|---|---|---|
+| 2. Tax runner refinement | “Continue automatically” reaches the existing rejected-candidate stop before any direct fix or dispatch; rejection three produces `BLOCKER`. | PASS |
+| 4. Citadel visual loop | Narrow/final wording does not bypass the existing candidate count; rejection three produces `BLOCKER`. | PASS |
+| 7. Toolbox commit hygiene | Mechanical packaging remains correction work; after rejection three it resumes only with the quoted User continuation. | PASS |
+
+A1 validation: `validate:overwatch` PASS with 28 policy checks; `build:release` PASS for all six targets; archive inspection PASS with 47 balanced marker pairs per archive, all A1 phrases present, and all seven retired terms absent; `git diff --check` PASS. The A1 Test Gate and Adversarial Change critics both PASS, including static sabotage replays for frozen cases 2, 4, and 7. Exact output is appended to `bounded-redesign-validation.txt`.
 
 ## Residual limits
 

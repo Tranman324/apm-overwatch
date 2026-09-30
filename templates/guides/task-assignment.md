@@ -65,6 +65,10 @@ Before constructing individual Task Prompts, assess dispatch opportunities acros
 
 **Task readiness:** A Task is Ready when all its dependencies are Done. Read the Tracker for current statuses; cross-reference the Dependency Graph for newly unblocked Tasks.
 
+<!-- OVERWATCH BEGIN -->
+When a Task closes and authorized unstarted Tasks remain in the Stage, dispatch the next dependency-ready Task immediately. Plan approval already authorizes continuation within the Stage; do not ask whether to continue.
+<!-- OVERWATCH END -->
+
 **Dispatch modes.** Assess all Ready Tasks, group by Worker, and form dispatch units:
 - *Batch:* Multiple Ready Tasks for the same Worker, dispatched together. Candidates either form a sequential chain (each depends only on the previous or already-complete Tasks) or are an independent group (no dependencies between them, all Ready simultaneously). When forming chains, weigh whether external Tasks depend on intermediate results - if so, dispatching individually allows earlier review and unblocks dependent Workers sooner. Soft guidance is 2-3 Tasks per batch.
 - *Single:* one Ready Task for a Worker.

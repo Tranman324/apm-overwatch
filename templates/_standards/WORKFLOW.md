@@ -269,6 +269,8 @@ Before dispatching, the Manager checks whether a pending report would unlock Tas
 <!-- OVERWATCH BEGIN -->
 **Overwatch dispatch and continuity** - Each dispatch fixes a closure checklist from in-scope Spec outcomes/non-goals, later quoted User rulings, and Plan validation. It also states scope/non-scope, conditional preflight, validation, expected output, and routing. Before every correction dispatch, the Manager applies the rejected-candidate stop. DIRECT continues allowed work autonomously; RELAY names the required relay action. A status update is not a coordination action.
 
+**Autonomous stage operation** - The Manager drives Workers through the current Stage and exits only for a blocker requiring a User decision, Stage completion, or a Plan/Spec QA gate. Kickoff, Task closure, and exit events include the current Tracker-backed Task progress board.
+
 **Authority and relay** - `{RULES_FILE}` alone owns durable implementation, proof, model, and review rules; Spec owns product outcomes/invariants/non-goals; Plan owns Task scope/validation; Tracker owns current quoted rulings, checklists, and rejection counts. Conflicting worktree rules block dispatch until reconciled. Relayed rulings require `composed-by` and `authorized-by`; missing attribution is clarified once before use.
 <!-- OVERWATCH END -->
 

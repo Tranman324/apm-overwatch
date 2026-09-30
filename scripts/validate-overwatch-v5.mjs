@@ -26,6 +26,12 @@ const checks = [
   ['Authority ownership', 'templates/commands/apm-2-initiate-manager.md', '**Authority ownership:**'],
   ['Stale grants removed', 'templates/guides/work-breakdown.md', 'Remove entries incompatible with the approved session scope'],
   ['Continuity checks stop first', 'templates/guides/task-review.md', 'before continuity, direct fixes, or follow-up dispatch'],
+  ['Autonomous Manager mode', 'templates/commands/apm-2-initiate-manager.md', 'Operating mode: autonomous within boundaries'],
+  ['Manager exit conditions', 'templates/commands/apm-2-initiate-manager.md', '`BLOCKER`'],
+  ['Manager stage-complete exit', 'templates/commands/apm-2-initiate-manager.md', '`STAGE_COMPLETE`'],
+  ['Manager QA-gate exit', 'templates/commands/apm-2-initiate-manager.md', '`QA_GATE`'],
+  ['Kickoff task listing', 'templates/commands/apm-2-initiate-manager.md', 'Immediately after the initiation reads and before first dispatch'],
+  ['Continuous stage dispatch', 'templates/guides/task-assignment.md', 'Plan approval already authorizes continuation within the Stage'],
   ['Statistical honesty', 'templates/_standards/WORKFLOW.md', 'no prevalence rate is claimed'],
 ];
 
