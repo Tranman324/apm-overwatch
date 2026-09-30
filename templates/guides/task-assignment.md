@@ -36,17 +36,9 @@ Tasks may depend on outputs from previous Tasks. The context you include depends
 Task Prompts must be self-contained. Workers have the same tools as any agent but are intentionally scoped to their Task Prompt, Rules, and accumulated working context to keep them focused on execution. You enforce this scoping by extracting relevant content from the Spec, Plan, and authoritative sources into each prompt rather than referencing those documents by path. Never reference the Spec, Plan, Tracker, or Index by path - Workers should not read them. Task Prompt instructions and objectives do not reference Stage numbers, other Task IDs, or coordination-level concepts (dependency context sections reference producer Tasks by ID as needed). Validation criteria are Worker-scoped.
 
 <!-- OVERWATCH BEGIN -->
-**Dispatch packet fields:** Non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches include a compact dispatch packet. The packet states: Worker role, work scope, invariant to close, explicit non-scope, environment prerequisites, proof gate, output contract, and routing identity. For trivial contained work, the same fields may be satisfied by the Objective, Workspace, Expected Output, Validation Criteria, and Reporting Instructions when they are already explicit.
+**Dispatch boundary:** Before dispatch, write a fixed closure checklist in Tracker Review State from (1) in-scope approved Spec outcomes/invariants/non-goals, (2) later quoted User rulings, and (3) Plan validation lines. Each item is concrete and testable; amendments require a quoted User ruling. The prompt states scope, non-scope, required setup, validation, expected output, and routing identity. Vague “all X” scope requires a target inventory first.
 
-**Scope fence and baseline:** Every Task states the exact required change, expected files or target set when knowable, expected artifacts, and explicit non-scope. Record the Task Base Commit before Worker changes and a coarse original effort baseline for later introduced-here classification and remediation spend checks. Align the title to the brief's actual deliverable, not a broader aspiration.
-
-**Planner-closure preflight:** Before dispatch, independently check the Plan's `Invariant` and `Likely Rejection` against the Task's actual fence. A `MITIGATION_ONLY` Task also requires named `Residual Risk` and `Critic Check`; an `UNKNOWN` Task must be a no-production-change spike. For a Task with State/Reaction-Path Evidence, confirm the reference covers all named in-scope paths or names exceptions. Do not dispatch a Task with missing or contradictory fields; correct the Plan, defer it, or dispatch the spike instead. Retain the invariant identifier, layers, closure, residual, and inventory reference in Review State; do not add this coordination metadata to a normal Worker prompt.
-
-**Packet precision:** The invariant describes what must become true, not how to implement it. Environment prerequisites name required credentials, services, binaries, runtime flags, fixtures, approvals, or live-state constraints before edits begin. The proof gate names the command, artifact, generated bundle, or runtime evidence that must prove the invariant; include a negative control or sabotage only when false-green risk is plausible, otherwise omit that ceremony. The output contract names required file changes, Task Log/Report content, commit expectations, and any evidence paths. Routing identity names the Worker agent slug, bus path when helpful, log path, branch or worktree, and project root for `.apm/` writes.
-
-**Inventory before vague scope:** Vague "all X" Tasks require inventory before edits begin. Inventory the target set before dispatch and include it in work scope or split the Task.
-
-**Execution authorization:** After receiving the prompt and before editing, every Worker sends a 2-3 sentence scope echo naming its understood change, expected files or target set, artifacts, and non-scope. Confirm alignment before execution. With direct agents, exchange this directly; in relay mode, batch authorizations for Tasks dispatched together, and combine a fence-matching authorization with the next dispatch relay when practical.
+**Conditional preflight:** Identify whether dependencies resolve, the target is permitted, and a representative positive control can run. Setup or harness creation/repair may proceed when it cannot. While runtime is blocked, do not claim runtime acceptance or keep polishing proof artifacts unrelated to restoring the runnable path.
 <!-- OVERWATCH END -->
 
 **Embed** content the Worker cannot discover from the codebase alone: design decisions and constraints from the Spec, Task definitions and guidance from the Plan, Task-relevant coordination context from the Tracker, observations from the Index, corrected findings from previous Tasks, and content from authoritative User documents the Spec references. Preserve specificity with exact constraints, not summaries. Present all embedded content as direct factual context. Never attribute content to its source artifact or use coordination-level vocabulary - Workers should not be aware of the Spec, Plan, Tracker, Index, or Memory - surfacing these concepts breaches their execution-focused scope.
@@ -62,9 +54,7 @@ Follow-up Task Prompts occur when the review outcome determines retry after inve
 **Content principle:** The follow-up is a new prompt - Objective, Instructions, Output, and Validation are refined based on what went wrong. Do not copy the previous prompt. The Worker operated with scoped context; your follow-up bridges the gap between what the Worker saw and what you now know from investigation, other Task completions, and planning document updates. Give the Worker concrete direction rather than restating the original Task Prompt.
 
 <!-- OVERWATCH BEGIN -->
-**Correction Envelope:** The Manager's Correction Envelope record carries the stable invariant ID and owning layer in Review State. The Worker follow-up carries only `Root Cause:`, `Plan Requirement:`, `Minimum Sufficient Correction:`, `Inventory Boundary:`, `Allowed Scope:`, `Non-Scope:`, `Required Proof:`, and `Expansion Disposition:`. Attach the adjudicated critic findings, not open-ended remedy suggestions. Critics cannot expand the Plan; out-of-fence work uses `PROPOSE_PLAN_CHANGE` rather than Worker dispatch.
-
-**Pattern-class follow-up:** On the first rejection that identifies a pattern-class root cause, require an inventory of the Plan-defined target set before edits, correction of every in-scope match, and reporting without modification of out-of-scope matches. Require the report to restate the cause and show the class was closed. Apply the canonical same-root and same-invariant halt sequence before authorizing another envelope. `PROOF_BLOCKED` routes to proof-path remediation, not code re-dispatch.
+**Correction dispatch:** Before any follow-up, apply the rejected-candidate stop in `{GUIDE_PATH:task-review}`. If allowed, send the rejected candidate, concrete findings, minimum correction, scope/non-scope, and required proof. Critics do not expand the fixed checklist; new product obligations require a User ruling.
 <!-- OVERWATCH END -->
 
 **Log path continuity:** Use the same `log_path` as the original. The Worker overwrites the previous log. The Manager captures iteration patterns in Stage summaries when relevant.
@@ -81,10 +71,6 @@ Before constructing individual Task Prompts, assess dispatch opportunities acros
 - *Parallel:* two or more dispatch units (any mix) with no unresolved cross-agent dependencies among them, dispatched simultaneously. Requires version control workspace isolation.
 
 **Parallel dispatch prerequisites:** Version control must be initialized (established during Manager 1 initiation per `{COMMAND_PATH:apm-2-initiate-manager}` §2.1 First Manager Initiation). If version control is not active, fall back to sequential dispatch. Recommend the User configure platform tool approvals for Workers to minimize interactive wait times during parallel execution.
-
-<!-- OVERWATCH BEGIN -->
-**Task sizing controls:** Split work that crosses ownership boundaries, requires a contract change in another function/module, or has more than one independent acceptance gate. If scope, risk, dependencies, or proof cannot fit one Worker-owned proof gate, split the Task before dispatch.
-<!-- OVERWATCH END -->
 
 Before dispatching a ready unit, check whether a pending report would unlock Tasks that combine well with the current unit. If it is the only outstanding report, waiting costs little. If multiple reports are pending or no plausible combination exists, dispatch immediately.
 
@@ -140,7 +126,7 @@ Perform the following actions:
 4. Extract Spec content relevant to this Task per §2.2 Task Prompt Content Standards. The Spec is in context from session start and refreshed on any modification. A fresh read is warranted at the start of a new Stage's first dispatch; per-Task re-reads of an unchanged Spec are not needed.
 5. Extract Task definition fields from the Plan: Objective, Steps, Guidance, Output, Validation. When Guidance references Spec sections, resolve those references and extract the referenced content per §2.2 Task Prompt Content Standards. Transform steps into actionable instructions, incorporating Guidance and relevant Spec content.
 <!-- OVERWATCH BEGIN -->
-6. Align the Task title with the extracted brief, construct the Scope Fence, record the Task Base Commit, and record a coarse original effort baseline. Do not broaden the Plan to make the title true.
+6. Align the title and scope with the Plan, then record the fixed closure checklist and current rejected-candidate count.
 <!-- OVERWATCH END -->
 
 ### 3.3 Task Prompt Construction
@@ -151,7 +137,7 @@ Perform the following actions:
 1. Construct YAML frontmatter per §4.1 Task Prompt Format.
 2. Construct prompt body: Task Reference, Dispatch Packet when required by §2.2, Context from Dependencies (if applicable), Objective, Detailed Instructions, Workspace, Expected Output, Validation Criteria, Instruction Accuracy, Task Iteration, Task Logging instructions, Reporting Instructions.
 <!-- OVERWATCH BEGIN -->
-2a. Include the Scope Fence, Task Base Commit, effort baseline, and execution-authorization instruction. A Task is dispatched for preflight before it is authorized for editing.
+2a. Include scope/non-scope, closure checklist, conditional preflight, validation, expected output, and routing identity.
 <!-- OVERWATCH END -->
 3. Create a feature branch off the repository's base branch per §2.5 Version Control Standards. For parallel dispatch, create a worktree: `git worktree add .apm/worktrees/<branch-slug> -b <branch-name>`. Include the branch name (sequential) or worktree path (parallel) in the Workspace section.
 4. Record the branch name in the Task row's Branch column when updating the Tracker.
@@ -162,10 +148,6 @@ Perform the following actions:
    - If the Worker is already initialized - direct the User to run `/apm-4-check-tasks` in the Worker's chat.
    - For batch dispatch - summarize what the Worker will receive (number of Tasks, sequential execution).
    - For parallel dispatch - list each Worker with its required action.
-<!-- OVERWATCH BEGIN -->
-8. Receive the Worker's Scope Echo and confirm or correct title/scope alignment before edits begin. In relay mode, batch confirmations for a dispatched group and combine a fence-matching confirmation with the next necessary relay when practical.
-<!-- OVERWATCH END -->
-
 ### 3.4 Follow-Up Task Prompt Construction
 
 Execute when the review outcome (per `{GUIDE_PATH:task-review}` §3.3 Review Outcome) determines follow-up is needed.
@@ -173,7 +155,7 @@ Execute when the review outcome (per `{GUIDE_PATH:task-review}` §3.3 Review Out
 Perform the following actions:
 1. Capture follow-up context: what went wrong, investigation findings, required refinement, any planning document modifications.
 <!-- OVERWATCH BEGIN -->
-2. For confirmed-defect rejected or Failed work, construct the bounded Correction Envelope from the Manager's logged disposition. Preserve its invariant ID and owning layer. On a first pattern-class rejection, define the Plan-bounded inventory surface. Before another cycle, compare the premise, root cause, invariant-envelope count, total rejection count, and cumulative remediation spend with Review State. Apply the canonical same-root and same-invariant halt sequence in `{GUIDE_PATH:task-review}` §2.2; three total rejections or another stop-loss breach routes to value review. Route `PROOF_BLOCKED` to harness remediation, a scheduled timing window, or a headless proof path instead.
+2. For rejected or Failed work, apply the stop rule, then send only the bounded correction information defined above. Route unavailable runtime to setup/harness repair, not further proof polishing.
 <!-- OVERWATCH END -->
 3. If planning documents were modified, extract relevant updated content per §3.2 Per-Task Analysis.
 4. Refine all content sections per §2.3 Follow-Up Standards. Include a follow-up context section explaining the issue and required refinement.
@@ -212,8 +194,7 @@ has_dependencies: true
 - *Title.* `#` heading using Task ID and title. Each section uses `##` heading:
 - *Task Reference:* Task ID and assigned agent.
 <!-- OVERWATCH BEGIN -->
-- *Dispatch Packet:* Included for non-trivial, autonomous, parallel, cross-agent, or follow-up dispatches. Fields: Worker Role, Scope Fence, Task Base Commit, Effort Baseline, Invariant, Environment Prerequisites, Proof Gate, Output Contract, Routing Identity.
-- *Scope Echo:* Every Task instructs the Worker to echo its understood change, expected files or target set, artifacts, and non-scope in 2-3 sentences and await execution authorization before editing.
+- *Dispatch Boundary:* Include scope/non-scope, fixed closure checklist, conditional preflight, validation, expected output, and routing identity.
 <!-- OVERWATCH END -->
 - *Context from Dependencies.* Included when `has_dependencies: true`. Format depends on dependency type per §2.1 Dependency Context Standards.
   - *Same-agent.* "Building on your previous work:" intro - `**From Task <N>.<M>:**` with key outputs and recall points - `**Integration Approach:**` with brief guidance.
@@ -221,7 +202,7 @@ has_dependencies: true
 - *Objective:* Single-sentence Task goal, optionally enhanced with coordination-level context.
 - *Detailed Instructions:* Plan steps transformed into actionable instructions with integrated Spec content and guidance.
 <!-- OVERWATCH BEGIN -->
-- *Proof Discipline:* State the invariant, compatibility constraints, and required proof path. Add a negative control or sabotage only when false-green risk is plausible. Instruct the Worker to use THINK / WORK / TRY: verify the premise, preserve the Scope Fence, make a narrow change, and prove Task-relative behavior through the real path when practical.
+- *Proof Discipline:* State the required proof path. Require runtime proof for runtime acceptance; when runtime is blocked, prioritize setup or harness repair.
 <!-- OVERWATCH END -->
 - *Workspace:* Working directory and branch name for sequential dispatch, or worktree path and project root for parallel dispatch. For worktree dispatch, instruct the Worker to perform code work in the worktree but resolve all `.apm/` paths (Task Log, bus files) from the project root. Worker operates in the specified workspace, commits there, and notes it in the Task Log. Workers do not merge.
 - *Expected Output:* Deliverables from Plan Output field.
@@ -246,7 +227,7 @@ Follow-up Task Prompts use the same structure as §4.1 Task Prompt Format with t
 - *Title:* `APM Follow-Up Task: <Task Title>`
 - *Follow-up context section* after Task Reference - previous issue, investigation findings, required refinement, additional guidance.
 <!-- OVERWATCH BEGIN -->
-- *Correction Envelope section* when the follow-up comes from confirmed-defect rejected work - review verdict, adjudicated finding, `Root Cause:`, `Plan Requirement:`, `Minimum Sufficient Correction:`, `Inventory Boundary:`, `Allowed Scope:`, `Non-Scope:`, `Required Proof:`, and `Expansion Disposition:`. The Manager retains invariant ID and owning layer in Review State rather than adding coordination metadata to the Worker packet. Require class-level proof for a pattern-class rejection.
+- *Correction section* for rejected work: rejected candidate, findings, minimum correction, scope/non-scope, and required proof.
 <!-- OVERWATCH END -->
 - *All content sections* refined based on what went wrong, not copied from the previous attempt.
 - *Same `log_path`* as the original Task Prompt.

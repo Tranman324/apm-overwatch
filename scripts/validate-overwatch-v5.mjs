@@ -5,25 +5,28 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 const checks = [
-  ['Planner invariant declaration', 'templates/guides/work-breakdown.md', 'Invariant and closure'],
-  ['Planner pre-mortem', 'templates/guides/work-breakdown.md', 'Likely rejection'],
-  ['Planner state/reaction inventory', 'templates/guides/work-breakdown.md', 'State/reaction-path evidence'],
-  ['Planner mitigation consequence', 'templates/guides/work-breakdown.md', 'Mitigation consequences'],
-  ['Manager pre-dispatch check', 'templates/guides/task-assignment.md', 'Planner-closure preflight'],
-  ['Same-root halt', 'templates/guides/task-review.md', 'SAME_ROOT_HALT'],
-  ['Same-invariant halt', 'templates/guides/task-review.md', 'SAME_INVARIANT_HALT'],
-  ['Third-envelope stop', 'templates/guides/task-review.md', 'Never authorize Envelope 3'],
-  ['Mitigation verdict', 'templates/guides/task-review.md', 'required for `MITIGATION_ONLY`'],
-  ['No stale distinct-cause bypass', 'templates/_standards/WORKFLOW.md', 'same invariant still violated after Envelope 2 triggers'],
-  ['External author checklist', 'docs/SPEC-AUTHORING-CHECKLIST.md', 'Overwatch Spec-Authoring Checklist'],
-  ['Manager coordination mode', 'templates/commands/apm-2-initiate-manager.md', 'record `Coordination mode: DIRECT` in Tracker Working Notes'],
-  ['Direct mode overrides relay wait state', 'templates/guides/task-review.md', 'override the command-mediated Wait state above'],
-  ['Direct terminal-response guard', 'templates/guides/task-review.md', 'do not end the current Manager turn while'],
-  ['Autonomous local gates', 'templates/commands/apm-2-initiate-manager.md', 'Local tests, builds, reviews, routine merges, and Correction Envelopes are autonomous steps, not human gates'],
-  ['Evidence-backed active status', 'templates/guides/task-review.md', 'Before claiming work is active, cite a current active child handle'],
-  ['Status requires coordination action', 'templates/guides/task-review.md', 'A status update is not a coordination action'],
-  ['Relay mode truthful stop', 'templates/guides/task-review.md', 'do not claim active polling afterward'],
-  ['Host interruption boundary', 'templates/_standards/WORKFLOW.md', 'cannot prevent host-enforced turn termination'],
+  ['Planner cannot implement', 'templates/commands/apm-1-initiate-planner.md', 'Do not edit product code, create implementation commits or PRs'],
+  ['Planner transition is explicit', 'templates/commands/apm-1-initiate-planner.md', 'you are now the Manager'],
+  ['Planner keeps discovery', 'templates/commands/apm-1-initiate-planner.md', 'research, read-only exploration, delegated discovery'],
+  ['Spec owns product outcomes', 'templates/apm/spec.md', '## Product Outcomes'],
+  ['Spec owns invariants', 'templates/apm/spec.md', '## Product Invariants and Non-Goals'],
+  ['Plan records closure sources', 'templates/guides/work-breakdown.md', '*Closure sources:*'],
+  ['Dispatch fixes closure checklist', 'templates/commands/apm-2-initiate-manager.md', 'Each dispatch fixes a short closure checklist'],
+  ['Closure sources include later rulings', 'templates/guides/task-assignment.md', 'later quoted User rulings'],
+  ['Closure changes require ruling', 'templates/guides/task-assignment.md', 'amendments require a quoted User ruling'],
+  ['Planning edits cannot invent scope', 'templates/guides/task-review.md', 'Any change to those categories requires a quoted User ruling'],
+  ['Conditional preflight permits setup', 'templates/guides/task-assignment.md', 'Setup or harness creation/repair may proceed'],
+  ['Runtime claims require proof', 'templates/guides/task-assignment.md', 'do not claim runtime acceptance'],
+  ['Rejected candidate unit', 'templates/guides/task-review.md', 'Count once per candidate, regardless of critic count or cause'],
+  ['Third candidate stops task', 'templates/guides/task-review.md', 'block further correction work or dispatch for that Task'],
+  ['Direct fixes cannot bypass stop', 'templates/guides/task-review.md', 'before continuity, direct fixes, or follow-up dispatch'],
+  ['Scope amendment does not reset count', 'templates/guides/task-review.md', 'Scope amendments and new findings do not reset the count'],
+  ['Unrelated work continues', 'templates/guides/task-review.md', 'Unrelated authorized Tasks may continue'],
+  ['Relay attribution', 'templates/commands/apm-2-initiate-manager.md', '`composed-by` and `authorized-by`'],
+  ['Authority ownership', 'templates/commands/apm-2-initiate-manager.md', '**Authority ownership:**'],
+  ['Stale grants removed', 'templates/guides/work-breakdown.md', 'Remove entries incompatible with the approved session scope'],
+  ['Continuity checks stop first', 'templates/guides/task-review.md', 'before continuity, direct fixes, or follow-up dispatch'],
+  ['Statistical honesty', 'templates/_standards/WORKFLOW.md', 'no prevalence rate is claimed'],
 ];
 
 let failed = false;
@@ -36,31 +39,33 @@ for (const [label, relative, phrase] of checks) {
   }
 }
 
-const workerGuide = read('templates/guides/task-execution.md');
-for (const phrase of ['CLOSEABLE_HERE', 'MITIGATION_ONLY', 'SAME_INVARIANT_HALT', '`DIRECT`', '`RELAY`']) {
-  if (workerGuide.includes(phrase)) {
-    console.error(`FAIL Worker-facing V5 policy leaked into task-execution.md: ${phrase}`);
+const runtimeFiles = [
+  'templates/commands/apm-1-initiate-planner.md',
+  'templates/commands/apm-2-initiate-manager.md',
+  'templates/guides/work-breakdown.md',
+  'templates/guides/task-assignment.md',
+  'templates/guides/task-review.md',
+  'templates/guides/task-execution.md',
+  'templates/_standards/WORKFLOW.md',
+];
+for (const phrase of ['SAME_ROOT_HALT', 'SAME_INVARIANT_HALT', 'Correction Envelope', 'MITIGATION_ONLY', 'CLOSEABLE_HERE', 'Scope Echo', 'Remediation value gate']) {
+  const leaked = runtimeFiles.filter((relative) => read(relative).includes(phrase));
+  if (leaked.length) {
+    console.error(`FAIL Removed machinery remains (${phrase}): ${leaked.join(', ')}`);
     failed = true;
   }
 }
-if (!failed) console.log('PASS Worker-facing V5 additions: none');
-
-const promptSpecs = read('templates/guides/task-assignment.md').slice(
-  read('templates/guides/task-assignment.md').indexOf('### 4.1 Task Prompt Format')
-);
-for (const phrase of ['`Invariant ID:`', '`Owning Layer:`', '`MITIGATION_ONLY`']) {
-  if (promptSpecs.includes(phrase)) {
-    console.error(`FAIL Worker prompt specification leaked V5 coordination metadata: ${phrase}`);
-    failed = true;
-  }
-}
-if (!failed) console.log('PASS Worker prompt V5 coordination metadata: none');
+if (!failed) console.log('PASS Removed machinery: absent');
 
 for (const relative of [
   'templates/guides/work-breakdown.md',
   'templates/guides/task-assignment.md',
   'templates/guides/task-review.md',
+  'templates/guides/task-execution.md',
+  'templates/commands/apm-1-initiate-planner.md',
   'templates/commands/apm-2-initiate-manager.md',
+  'templates/apm/spec.md',
+  'templates/apm/tracker.md',
   'templates/_standards/WORKFLOW.md',
 ]) {
   const source = read(relative);
