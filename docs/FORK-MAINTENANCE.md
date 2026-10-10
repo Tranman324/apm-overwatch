@@ -82,7 +82,7 @@ If using the release workflow, provide the version override without the leading 
 
 For later upstream bases, keep the upstream version visible in the tag. For example, the first Overwatch release based on upstream `v1.0.3` would be `v1.0.3-overwatch.1`.
 
-Jeremy owns tag push, GitHub release creation, and post-release scratch install validation:
+The maintainer owns tag push, GitHub release creation, and post-release scratch install validation:
 
 ```bash
 apm custom -r Tranman324/apm-overwatch

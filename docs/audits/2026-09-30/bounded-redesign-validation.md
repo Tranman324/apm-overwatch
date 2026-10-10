@@ -55,40 +55,36 @@ No boundary in this draft is class (a). Templates do not remove tools or technic
 
 ## Eight frozen decision-point replay
 
+Project names are anonymized; the cases come from private client and personal projects.
+
 This is a manual instruction replay: each row asks which decision the draft text prescribes at the frozen point. PASS does not demonstrate that a runtime agent will comply.
 
 | # | Frozen case | Draft result | Reason |
 |---:|---|---|---|
-| 1 | Toolbox Planner crossover | PASS — hand off | Execution verbs cannot transition the Planner. Product-code edits, implementation commits, and PR creation remain outside Planner scope until the User explicitly says “you are now the Manager.” |
-| 2 | Tax runner refinement | PASS — stop after candidate 3 | Both critics on one candidate count once. The third rejected candidate blocks the next correction for that Task until quoted User continuation; independent authorized work remains eligible. |
-| 3 | Tax setup gates | PASS — continue bounded setup | Conditional preflight expressly permits dependency, fixture, target-format, and harness repair before positive control. It bars runtime acceptance and unrelated proof polishing, not necessary setup already authorized. |
-| 4 | Citadel visual loop | PASS — stop after candidate 3 | The rule is candidate-based and cause-independent, so describing the next defect as new, narrow, or final does not permit Envelope 3. |
-| 5 | Citadel completion mismatch | PASS — keep acceptance open | The fixed checklist includes Plan validation and Spec outcomes. Nearby-phone/local-width evidence remains `open` unless evidenced or waived by quoted User ruling. |
-| 6 | Nora onboarding expansion | PASS — request product ruling | A critic finding must cite a checklist item or named material risk. A new reachable product state is `NEEDS_USER_RULING`, and a later quoted ruling can amend the fixed checklist. Missing relay attribution must be clarified before use. |
-| 7 | Toolbox commit hygiene | PASS — hold, then continue only after quote | Packaging failures count as rejected candidates. Once the third rejection has occurred, only the quoted zero-implementation continuation permits the next correction. |
+| 1 | Project A Planner crossover | PASS — hand off | Execution verbs cannot transition the Planner. Product-code edits, implementation commits, and PR creation remain outside Planner scope until the User explicitly says “you are now the Manager.” |
+| 2 | Project B runner refinement | PASS — stop after candidate 3 | Both critics on one candidate count once. The third rejected candidate blocks the next correction for that Task until quoted User continuation; independent authorized work remains eligible. |
+| 3 | Project B setup gates | PASS — continue bounded setup | Conditional preflight expressly permits dependency, fixture, target-format, and harness repair before positive control. It bars runtime acceptance and unrelated proof polishing, not necessary setup already authorized. |
+| 4 | Project C visual loop | PASS — stop after candidate 3 | The rule is candidate-based and cause-independent, so describing the next defect as new, narrow, or final does not permit Envelope 3. |
+| 5 | Project C completion mismatch | PASS — keep acceptance open | The fixed checklist includes Plan validation and Spec outcomes. Nearby-phone/local-width evidence remains `open` unless evidenced or waived by quoted User ruling. |
+| 6 | Project D onboarding expansion | PASS — request product ruling | A critic finding must cite a checklist item or named material risk. A new reachable product state is `NEEDS_USER_RULING`, and a later quoted ruling can amend the fixed checklist. Missing relay attribution must be clarified before use. |
+| 7 | Project A commit hygiene | PASS — hold, then continue only after quote | Packaging failures count as rejected candidates. Once the third rejection has occurred, only the quoted zero-implementation continuation permits the next correction. |
 | 8 | Planning process / stale grants | PASS — revise before approval | Rules analysis must remove entries incompatible with the approved session scope. Rules is the only owner of durable implementation/proof/model/review policy, preventing a worktree copy from silently preserving incompatible grants. User-requested gates remain valid until a quoted ruling changes them. |
 
 ## Previously unexamined session checks
 
-These three main Manager chats predate the screened 20-chat audit set and were not counted as automated child chats.
+These three Manager sessions from private projects (names withheld) predate the screened 20-chat audit set and were not counted as automated child chats.
 
-### Tax-Brain — 2026-07-06 Manager (`019f3a1b-466d-7ad3-a68e-5793bbc3316d`)
+### Project B — 2026-07-06 Manager
 
 The Manager observed that the Spec required 17 `relationshipLinks[]` entries while the branch contained 16, then accepted and merged Stage 1 with the mismatch merely documented. Under the draft, that Spec outcome would be a fixed closure item and remain `open`; documentation alone could not close it without a quoted waiver. The session's VC conventions were written into the root Rules file, which is consistent with the draft's authority owner and therefore serves as a no-change authority control rather than evidence of divergence.
 
-Evidence: `/Users/jeremytran/.codex/archived_sessions/rollout-2026-07-06T21-04-53-019f3a1b-466d-7ad3-a68e-5793bbc3316d.jsonl` lines 286–287, 676, and 803.
-
-### Toolbox-3.0 — 2026-07-15 Manager (`019f67bb-78c4-7b31-89fe-a4d867e68d4a`)
+### Project A — 2026-07-15 Manager
 
 This is a useful negative control. The Manager eventually halted the trust-boundary task rather than autonomously issuing a third correction. The draft preserves that outcome with a smaller and more countable rule: candidate 3 blocks candidate 4, without root-cause/invariant/value-gate taxonomy. Earlier in the chat, a stale integration-branch grant in root Rules also needed manual cleanup; the draft makes incompatible-grant removal part of Rules approval.
 
-Evidence: `/Users/jeremytran/.codex/archived_sessions/rollout-2026-07-15T17-42-47-019f67bb-78c4-7b31-89fe-a4d867e68d4a.jsonl` line 1288 and the initial root Rules snapshot.
-
-### Nora-Prod — 2026-07-26 Manager (`019fa0b4-5531-7460-9ea2-2af54520cae3`)
+### Project D — 2026-07-26 Manager
 
 Task 2.4 reached a recorded fourth-containment halt, but the chat also contains explicit User continuations for later correction work. The draft would record the third rejection and require those quoted continuations; it would not erase them or force an earlier halt. This is a negative control showing the exception can work while unrelated Task 2.2 review continues. Several pasted `ATHENA —`/`Ruling:` messages lacked the required two-field attribution, so the Manager would ask once for `composed-by` and `authorized-by` before treating them as rulings.
-
-Evidence: `/Users/jeremytran/.codex/archived_sessions/rollout-2026-07-26T19-13-20-019fa0b4-5531-7460-9ea2-2af54520cae3.jsonl` lines 4225, 4899, 5026, and 5225.
 
 ## Build and artifact validation
 
@@ -110,9 +106,9 @@ The Manager now drives the unchanged `apm-3-initiate-worker` / `apm-4-check-task
 
 | Frozen stop case | A1 replay | Result |
 |---|---|---|
-| 2. Tax runner refinement | “Continue automatically” reaches the existing rejected-candidate stop before any direct fix or dispatch; rejection three produces `BLOCKER`. | PASS |
-| 4. Citadel visual loop | Narrow/final wording does not bypass the existing candidate count; rejection three produces `BLOCKER`. | PASS |
-| 7. Toolbox commit hygiene | Mechanical packaging remains correction work; after rejection three it resumes only with the quoted User continuation. | PASS |
+| 2. Project B runner refinement | “Continue automatically” reaches the existing rejected-candidate stop before any direct fix or dispatch; rejection three produces `BLOCKER`. | PASS |
+| 4. Project C visual loop | Narrow/final wording does not bypass the existing candidate count; rejection three produces `BLOCKER`. | PASS |
+| 7. Project A commit hygiene | Mechanical packaging remains correction work; after rejection three it resumes only with the quoted User continuation. | PASS |
 
 A1 validation: `validate:overwatch` PASS with 28 policy checks; `build:release` PASS for all six targets; archive inspection PASS with 47 balanced marker pairs per archive, all A1 phrases present, and all seven retired terms absent; `git diff --check` PASS. The A1 Test Gate and Adversarial Change critics both PASS, including static sabotage replays for frozen cases 2, 4, and 7. Exact output is appended to `bounded-redesign-validation.txt`.
 

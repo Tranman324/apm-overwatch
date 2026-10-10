@@ -1,6 +1,6 @@
 # APM Overwatch Current Design
 
-**Status:** Current policy; live V5 `DIRECT` compliance remains unproven
+**Status:** Partly superseded by the `v1.0.3-overwatch.6` bounded redesign (see [validation](audits/2026-09-30/bounded-redesign-validation.md)). Where this index conflicts with [`WORKFLOW.md`](../templates/_standards/WORKFLOW.md) or the templates, they govern.
 
 **Updated:** 2026-08-09
 

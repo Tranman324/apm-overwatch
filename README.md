@@ -1,21 +1,48 @@
 # APM Overwatch
 
-APM Overwatch is a public fork of [Agentic Project Management](https://github.com/sdi2200262/agentic-project-management). It adds execution-layer verification and autonomous-operation hardening to APM templates while preserving upstream documentation below.
+[![Validate](https://github.com/Tranman324/apm-overwatch/actions/workflows/validate.yml/badge.svg)](https://github.com/Tranman324/apm-overwatch/actions/workflows/validate.yml)
 
-Install the custom templates from this fork with:
+A fork of [Agentic Project Management (APM)](https://github.com/sdi2200262/agentic-project-management) that makes AI coding agents prove their work and stop when they are stuck.
+
+APM splits a project between a Planner, a Manager, and Workers. Overwatch keeps that model and adds guardrails I needed after running it for months on real production projects:
+
+- **Proof, not claims.** Workers report real command output and task-relative tests. The Manager treats every report as a hypothesis and checks it against the commit.
+- **A fixed finish line.** Each task gets one closure checklist at dispatch. Reviewers cannot invent new scope; new product questions go to the human as `NEEDS_USER_RULING`.
+- **A hard stop on loops.** The third rejected candidate on a task halts further corrections until the human explicitly says to continue.
+- **Risk-weighted review.** Low-risk work gets one critic pass. Security, privacy, schema, and API changes get independent test-gate and adversarial critics.
+- **Autonomous coordination.** The Manager can drive Workers through a whole stage and only stops on a blocker, stage completion, or a QA gate.
+
+## How it was built
+
+The rules came from failure evidence, not theory. I audited Manager sessions across private projects, froze the decision points where agents went wrong (fake-green results, endless "one last fix" loops, scope invented by reviewers), and rewrote the templates until each frozen case produced the right decision. The [bounded-redesign validation](docs/audits/2026-09-30/bounded-redesign-validation.md) shows that replay, with project names anonymized. That redesign also cut 45 lines from the shipped templates.
+
+A static validator (`npm run validate:overwatch`) checks that the required policy phrases are present and that retired machinery stays out. It runs before every release build. It proves the templates say the right thing. It cannot force an agent to obey them, and the docs say so.
+
+## Install
 
 ```bash
+npm install -g agentic-pm
 apm custom -r Tranman324/apm-overwatch
 ```
 
-Public fork notes:
+Releases are built for Claude Code, Codex CLI, Cursor, GitHub Copilot, Antigravity, and OpenCode.
 
-- [Current Design](docs/OVERWATCH-DESIGN.md)
-- [Archived Original Specification](docs/archive/README.md)
-- [Third Party Notices](THIRD_PARTY_NOTICES.md)
-- [Fork Maintenance](docs/FORK-MAINTENANCE.md)
+## Docs
 
-Overwatch targets execution-layer failures such as stalls, weak reports, fake-green evidence, evidence ambiguity, rejection loops, abandoned Worker output, and Manager turns that terminate while autonomous work remains. It also scrutinizes declared invariant ownership, closeability, and shared-state write/reaction coverage before dispatch. It cannot prevent host-enforced turn termination or disconnection; recovery resumes from durable artifacts. It does not guarantee spec correctness or solve general spec/promise drift, product gaps, requirement misreads, or planning promises dropped during implementation.
+- [Current design](docs/OVERWATCH-DESIGN.md)
+- [Integration map](docs/OVERWATCH-INTEGRATION-MAP.md)
+- [Spec authoring checklist](docs/SPEC-AUTHORING-CHECKLIST.md)
+- [Fork maintenance](docs/FORK-MAINTENANCE.md)
+- [Archived original brief](docs/archive/README.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)
+
+## Limits
+
+Overwatch targets execution failures: stalls, weak reports, fake-green evidence, rejection loops, abandoned Worker output, and Managers that quit while work remains. It cannot prevent host timeouts or disconnects; recovery resumes from files on disk. It does not guarantee the spec is right or catch requirements that were misread from the start.
+
+## License
+
+Same as upstream: [MPL-2.0](LICENSE). APM is by [CobuterMan](https://github.com/sdi2200262); Overwatch changes are by Jeremy Tran.
 
 ---
 

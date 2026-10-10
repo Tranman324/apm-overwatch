@@ -1,6 +1,6 @@
 # Overwatch Spec-Authoring Checklist
 
-Use this checklist when an implementation brief enters APM from outside the Planner flow, including Athena-authored specifications. It is an authoring aid, not a Worker runtime procedure.
+Use this checklist when an implementation brief enters APM from outside the Planner flow, including externally authored specifications. It is an authoring aid, not a Worker runtime procedure.
 
 For each proposed Task, provide:
 
