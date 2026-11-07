@@ -7,6 +7,8 @@
  */
 
 import fs from 'fs-extra';
+import { constants } from 'node:fs';
+import { open } from 'node:fs/promises';
 import path from 'path';
 import AdmZip from 'adm-zip';
 import { fetchAsset } from './github.js';
@@ -21,6 +23,25 @@ import logger from '../ui/logger.js';
  */
 export async function downloadBundle(url) {
   return fetchAsset(url);
+}
+
+async function ensureSafeDirectory(root, directory) {
+  await fs.ensureDir(root);
+  let current = root;
+  for (const part of ['', ...path.relative(root, directory).split(path.sep).filter(Boolean)]) {
+    if (part) {
+      current = path.join(current, part);
+      try {
+        await fs.mkdir(current);
+      } catch (err) {
+        if (err.code !== 'EEXIST') throw err;
+      }
+    }
+    const stat = await fs.lstat(current);
+    if (!stat.isDirectory() || stat.isSymbolicLink()) {
+      throw new Error(`Extraction directory is not a real directory: ${current}`);
+    }
+  }
 }
 
 /**
@@ -41,6 +62,9 @@ export async function extractBundle(zipBuffer, destPath, options = {}) {
   try {
     const zip = new AdmZip(zipBuffer);
     const entries = zip.getEntries();
+    const resolvedDest = path.resolve(destPath);
+    await ensureSafeDirectory(resolvedDest, resolvedDest);
+    const realDest = await fs.realpath(resolvedDest);
 
     for (const entry of entries) {
       if (entry.isDirectory) continue;
@@ -55,17 +79,34 @@ export async function extractBundle(zipBuffer, destPath, options = {}) {
       if (entryPath.startsWith('.apm/archives/')) continue;
 
       const fullPath = path.join(destPath, entryPath);
-      const resolvedDest = path.resolve(destPath);
       const resolvedFull = path.resolve(fullPath);
 
       // Block path traversal — skip entries that escape the destination
-      if (!resolvedFull.startsWith(resolvedDest + path.sep) && resolvedFull !== resolvedDest) {
+      if (!resolvedFull.startsWith(resolvedDest + path.sep)) {
         logger.warn(`Blocked path traversal entry: ${entryPath}`);
         continue;
       }
 
-      await fs.ensureDir(path.dirname(fullPath));
-      await fs.writeFile(fullPath, entry.getData());
+      await ensureSafeDirectory(resolvedDest, path.dirname(resolvedFull));
+      const realParent = await fs.realpath(path.dirname(resolvedFull));
+      if (realParent !== realDest && !realParent.startsWith(realDest + path.sep)) {
+        throw new Error(`Extraction parent is outside the destination: ${entryPath}`);
+      }
+      try {
+        const existing = await fs.lstat(resolvedFull);
+        if (!existing.isFile() || existing.nlink > 1) {
+          throw new Error(`Extraction target is not an ordinary file: ${entryPath}`);
+        }
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err;
+      }
+      const file = await open(resolvedFull,
+        constants.O_WRONLY | constants.O_CREAT | constants.O_TRUNC | constants.O_NOFOLLOW, 0o666);
+      try {
+        await file.writeFile(entry.getData());
+      } finally {
+        await file.close();
+      }
       writtenFiles.push(entryPath);
     }
 

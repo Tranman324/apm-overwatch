@@ -18,7 +18,7 @@ When using `apm custom` to install templates from third-party repositories, you 
 
 - **Execute code during installation**: The CLI only extracts ZIP contents. No scripts run during `apm init` or `apm custom`.
 
-- **Write files outside the project directory**: The CLI validates that all extracted paths resolve within the project directory. Entries attempting path traversal are blocked with a warning.
+- **Write files outside the project directory via archive paths or existing symbolic links**: The CLI skips paths above the project root and rejects existing linked directories or files before writing. This protection assumes another local process is not changing the directory tree during extraction.
 
 - **Delete or modify files not in the bundle**: Only files explicitly included in the ZIP are written. Existing files outside the bundle's paths are untouched.
 
